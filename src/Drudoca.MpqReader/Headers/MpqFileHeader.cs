@@ -2,6 +2,10 @@
 {
     internal class MpqFileHeader
     {
+        /// <summary>
+        /// The ID_MPQ ('MPQ\x1A') signature
+        /// </summary>
+        public int Signature { get; }
 
         /// <summary>
         /// Size of the archive header

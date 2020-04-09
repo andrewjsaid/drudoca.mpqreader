@@ -3,6 +3,11 @@
     internal class MpqUserDataHeader
     {
         /// <summary>
+        /// The ID_MPQ_USERDATA ('MPQ\x1B') signature
+        /// </summary>
+        public int Signature { get; }
+
+        /// <summary>
         /// Maximum size of the user data
         /// </summary>
         public int UserDataSize { get; }
