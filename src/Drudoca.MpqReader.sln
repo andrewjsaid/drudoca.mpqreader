@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29926.136
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drudoca.MpqReader", "Drudoca.MpqReader\Drudoca.MpqReader.csproj", "{2D388A37-78EB-466A-952C-B31A82506FB3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drudoca.MpqReader", "Drudoca.MpqReader\Drudoca.MpqReader.csproj", "{2D388A37-78EB-466A-952C-B31A82506FB3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BB042AF7-09E9-4230-98B9-DF9D54788247}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drudoca.MpqReader.Tests", "Drudoca.MpqReader.Tests\Drudoca.MpqReader.Tests.csproj", "{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{2D388A37-78EB-466A-952C-B31A82506FB3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D388A37-78EB-466A-952C-B31A82506FB3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D388A37-78EB-466A-952C-B31A82506FB3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7} = {BB042AF7-09E9-4230-98B9-DF9D54788247}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {B3DB77B4-418F-43A3-951E-570A8F26C271}
