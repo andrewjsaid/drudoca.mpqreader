@@ -2,6 +2,29 @@
 {
     internal class MpqFileHeader
     {
+
+        public MpqFileHeader(
+            int signature,
+            int headerSize,
+            int archiveSize,
+            ushort formatVersion,
+            ushort blockSize,
+            int hashTableOffset,
+            int blockTableOffset,
+            int hashTableCount,
+            int blockTableCount)
+        {
+            Signature = signature;
+            HeaderSize = headerSize;
+            ArchiveSize = archiveSize;
+            FormatVersion = formatVersion;
+            BlockSize = blockSize;
+            HashTableOffset = hashTableOffset;
+            BlockTableOffset = blockTableOffset;
+            HashTableCount = hashTableCount;
+            BlockTableCount = blockTableCount;
+        }
+
         /// <summary>
         /// The ID_MPQ ('MPQ\x1A') signature
         /// </summary>
@@ -55,101 +78,5 @@
         /// </summary>
         public int BlockTableCount { get; }
 
-        //-- MPQ HEADER v 2 -------------------------------------------
-
-        /// <summary>
-        /// Offset to the beginning of array of 16-bit high parts of file offsets.
-        /// </summary>
-        public ulong HiBlockTableOffset { get; }
-
-        /// <summary>
-        /// High 16 bits of the hash table offset for large archives.
-        /// </summary>
-        public ushort HashTableOffsetHi { get; }
-
-        /// <summary>
-        /// High 16 bits of the block table offset for large archives.
-        /// </summary>
-        public ushort BlockTableOffsetHi { get; }
-
-        //-- MPQ HEADER v 3 -------------------------------------------
-
-        /// <summary>
-        /// 64-bit version of the archive size
-        /// </summary>
-        public ulong ArchiveSize2 { get; }
-
-        /// <summary>
-        /// 64-bit position of the BET table
-        /// </summary>
-        public ulong BetTableOffset { get; }
-
-        /// <summary>
-        /// 64-bit position of the HET table
-        /// </summary>
-        public ulong HetTableOffset { get; }
-
-        //-- MPQ HEADER v 4 -------------------------------------------
-
-        /// <summary>
-        /// Compressed size of the hash table
-        /// </summary>
-        public ulong HashTableSize { get; }
-
-        /// <summary>
-        /// Compressed size of the block table
-        /// </summary>
-        public ulong BlockTableSize { get; }
-
-        /// <summary>
-        /// Compressed size of the hi-block table
-        /// </summary>
-        public ulong HiBlockTableSize { get; }
-
-        /// <summary>
-        /// Compressed size of the HET block
-        /// </summary>
-        public ulong HetTableSize { get; }
-
-        /// <summary>
-        /// Compressed size of the BET block
-        /// </summary>
-        public ulong BetTableSize { get; }
-
-        /// <summary>
-        /// Size of raw data chunk to calculate MD5.
-        /// MD5 of each data chunk follows the raw file data.
-        /// </summary>
-        public int RawChunkSize { get; }
-
-        /// <summary>
-        /// MD5 of the block table before decryption
-        /// </summary>
-        public string Md5BlockTable { get; }
-
-        /// <summary>
-        /// MD5 of the hash table before decryption
-        /// </summary>
-        public string Md5_HashTable { get; }
-
-        /// <summary>
-        /// MD5 of the hi-block table
-        /// </summary>
-        public string Md5_HiBlockTable { get; }
-
-        /// <summary>
-        /// MD5 of the BET table before decryption
-        /// </summary>
-        public string Md5_BetTable { get; }
-
-        /// <summary>
-        /// MD5 of the HET table before decryption
-        /// </summary>
-        public string Md5_HetTable { get; }
-
-        /// <summary>
-        /// MD5 of the MPQ header from signature to (including) MD5_HetTable
-        /// </summary>
-        public string Md5_MpqHeader { get; }
     }
 }

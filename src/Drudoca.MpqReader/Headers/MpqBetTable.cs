@@ -2,6 +2,53 @@
 {
     internal class MpqBetTable
     {
+
+        public MpqBetTable(
+            int signature,
+            int version,
+            int dataSize,
+            int tableSize,
+            int fileCount,
+            int unknown08,
+            int tableEntryBitSize,
+            int filePositionBitIndex,
+            int fileSizeBitIndex,
+            int compressedSizeBitIndex,
+            int flagIndexBitIndex,
+            int unknownBitIndex,
+            int filePositionBitSize,
+            int compressedSizeBitSize,
+            int unknownBitSize,
+            int betHashTotalSize,
+            int betHashExtraBitSize,
+            int betHashBitSize,
+            int betHashArraySize,
+            int flagCount,
+            int[] flags)
+        {
+            Signature = signature;
+            Version = version;
+            DataSize = dataSize;
+            TableSize = tableSize;
+            FileCount = fileCount;
+            Unknown08 = unknown08;
+            TableEntryBitSize = tableEntryBitSize;
+            FilePositionBitIndex = filePositionBitIndex;
+            FileSizeBitIndex = fileSizeBitIndex;
+            CompressedSizeBitIndex = compressedSizeBitIndex;
+            FlagIndexBitIndex = flagIndexBitIndex;
+            UnknownBitIndex = unknownBitIndex;
+            FilePositionBitSize = filePositionBitSize;
+            CompressedSizeBitSize = compressedSizeBitSize;
+            UnknownBitSize = unknownBitSize;
+            BetHashTotalSize = betHashTotalSize;
+            BetHashExtraBitSize = betHashExtraBitSize;
+            BetHashBitSize = betHashBitSize;
+            BetHashArraySize = betHashArraySize;
+            FlagCount = flagCount;
+            Flags = flags;
+        }
+
         /// <summary>
         /// 'BET\x1A'
         /// </summary>
@@ -115,7 +162,7 @@
         /// <summary>
         /// Array of file flags.
         /// </summary>
-        public int[] FlagsArray { get; }
+        public int[] Flags { get; }
 
         // TODO AJS: Add the following
 

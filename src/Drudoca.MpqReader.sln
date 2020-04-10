@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drudoca.MpqReader", "Drudoc
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BB042AF7-09E9-4230-98B9-DF9D54788247}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Drudoca.MpqReader.Tests", "Drudoca.MpqReader.Tests\Drudoca.MpqReader.Tests.csproj", "{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Drudoca.MpqReader.Tests", "Drudoca.MpqReader.Tests\Drudoca.MpqReader.Tests.csproj", "{D76EA0FE-30BD-47BF-8798-4FCF8F4400B7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

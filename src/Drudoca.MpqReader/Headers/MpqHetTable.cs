@@ -2,6 +2,37 @@
 {
     internal class MpqHetTable
     {
+
+        public MpqHetTable(
+            int signature,
+            int version,
+            int dataSize,
+            int tableSize,
+            int maxFileCount,
+            int hashTableSize,
+            int hashEntryBitSize,
+            int totalIndexBitSize,
+            int indexExtraBitSize,
+            int indexBitSize,
+            int blockTableSize,
+            byte[] hetHashTable,
+            long[] fileIndices)
+        {
+            Signature = signature;
+            Version = version;
+            DataSize = dataSize;
+            TableSize = tableSize;
+            MaxFileCount = maxFileCount;
+            HashTableSize = hashTableSize;
+            HashEntryBitSize = hashEntryBitSize;
+            TotalIndexBitSize = totalIndexBitSize;
+            IndexExtraBitSize = indexExtraBitSize;
+            IndexBitSize = indexBitSize;
+            BlockTableSize = blockTableSize;
+            HetHashTable = hetHashTable;
+            FileIndices = fileIndices;
+        }
+
         /// <summary>
         /// 'HET\x1A'
         /// </summary>

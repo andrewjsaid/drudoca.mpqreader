@@ -2,6 +2,18 @@
 {
     internal class MpqUserDataHeader
     {
+        public MpqUserDataHeader(
+            int signature,
+            int userDataSize,
+            int headerOffset,
+            int userDataHeaderSize)
+        {
+            Signature = signature;
+            UserDataSize = userDataSize;
+            HeaderOffset = headerOffset;
+            UserDataHeaderSize = userDataHeaderSize;
+        }
+
         /// <summary>
         /// The ID_MPQ_USERDATA ('MPQ\x1B') signature
         /// </summary>
