@@ -23,6 +23,12 @@ namespace Drudoca.MpqReader
             var fileHeaderOffset = userDataHeaderOffset + userDataHeader.HeaderOffset;
             stream.Seek(fileHeaderOffset, SeekOrigin.Begin);
             var fileHeader = await sr.ReadFileHeaderAsync();
+            if (fileHeader == null)
+            {
+                // TODO: Later we must support files without UserDataHeader telling us where this one is.
+                throw new InvalidDataException("FileHeader not found.");
+            }
+
 
             return null!;
         }

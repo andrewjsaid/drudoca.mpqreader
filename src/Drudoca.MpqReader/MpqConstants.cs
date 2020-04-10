@@ -17,5 +17,19 @@
         /// </summary>
         public const int MpqHeaderSignature = 0x1A51504D;
 
+        public const ushort LanguageNeutral = 0;
+        public const ushort LanguageCzech = 0x405;
+        public const ushort LanguageEnglish = 0x409;
+        public const ushort LanguageFrench = 0x40c;
+        public const ushort LanguageJapanese = 0x411;
+        public const ushort LanguagePolish = 0x415;
+        public const ushort LanguageRussian = 0x419;
+        public const ushort LanguageChineseTaiwan = 0x404;
+        public const ushort LanguageGerman = 0x407;
+        public const ushort LanguageSpanish = 0x40a;
+        public const ushort LanguageItalian = 0x410;
+        public const ushort LanguageKorean = 0x412;
+        public const ushort LanguagePortuguese = 0x416;
+        public const ushort LanguageEnglishUK = 0x809;
     }
 }
