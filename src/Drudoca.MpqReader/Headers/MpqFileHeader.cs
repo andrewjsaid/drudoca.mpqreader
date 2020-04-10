@@ -1,4 +1,4 @@
-﻿namespace Drudoca.MpqReader
+﻿namespace Drudoca.MpqReader.Headers
 {
     internal class MpqFileHeader
     {
