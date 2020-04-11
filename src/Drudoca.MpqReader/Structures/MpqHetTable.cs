@@ -8,13 +8,13 @@
             int version,
             int dataSize,
             int tableSize,
-            int maxFileCount,
-            int hashTableSize,
+            int numEntries,
+            int numSlots,
             int hashEntryBitSize,
             int totalIndexBitSize,
             int indexExtraBitSize,
             int indexBitSize,
-            int blockTableSize,
+            int indexTableSize,
             byte[] hashTable,
             long[] fileIndices)
         {
@@ -22,13 +22,13 @@
             Version = version;
             DataSize = dataSize;
             TableSize = tableSize;
-            MaxFileCount = maxFileCount;
-            HashTableSize = hashTableSize;
+            NumEntries = numEntries;
+            NumSlots = numSlots;
             HashEntryBitSize = hashEntryBitSize;
             TotalIndexBitSize = totalIndexBitSize;
             IndexExtraBitSize = indexExtraBitSize;
             IndexBitSize = indexBitSize;
-            BlockTableSize = blockTableSize;
+            IndexTableSize = indexTableSize;
             HashTable = hashTable;
             FileIndices = fileIndices;
         }
@@ -49,19 +49,20 @@
         public int DataSize { get; }
 
         /// <summary>
-        /// Size of the entire hash table, including the header (in bytes)
+        /// Size of the entire hash table, including the het header but not the table header.
+        /// i.e. should be equal to <see cref="DataSize"/>.
         /// </summary>
         public int TableSize { get; }
 
         /// <summary>
-        /// Maximum number of files in the MPQ
+        /// Number of files in the archive.
         /// </summary>
-        public int MaxFileCount { get; }
+        public int NumEntries { get; }
 
         /// <summary>
-        /// Size of the hash table (in bytes)
+        /// Max number of entries in the hash table
         /// </summary>
-        public int HashTableSize { get; }
+        public int NumSlots { get; }
 
         /// <summary>
         /// Effective size of the hash entry (in bits)
@@ -84,9 +85,9 @@
         public int IndexBitSize { get; }
 
         /// <summary>
-        /// Size of the block index subtable (in bytes)
+        /// Size of the index subtable (in bytes)
         /// </summary>
-        public int BlockTableSize { get; }
+        public int IndexTableSize { get; }
 
         /// <summary>
         /// HET hash table.

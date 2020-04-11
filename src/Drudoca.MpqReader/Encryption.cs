@@ -53,6 +53,10 @@ namespace Drudoca.MpqReader
                 for (int i = 0; i < text.Length; i++)
                 {
                     var c = char.ToUpper(text[i]);
+                    if(c == '/')
+                    {
+                        c = '\\';
+                    }
                     seed1 = _cryptTable[(hashType << 8) + c] ^ (seed1 + seed2);
                     seed2 = c + seed1 + seed2 + (seed2 << 5) + 3;
                 }

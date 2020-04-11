@@ -31,8 +31,8 @@ namespace Drudoca.MpqReader
                 throw new InvalidDataException("FileHeader not found.");
             }
 
-            // var hetTable = await ReadHetTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
-            // var betTable = await ReadBetTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
+            var hetTable = await ReadHetTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
+            var betTable = await ReadBetTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
             var hashTable = await ReadHashTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
             var blockTable = await ReadBlockTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
             var hiBlockTable = await ReadHiBlockTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);

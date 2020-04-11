@@ -51,6 +51,13 @@ namespace Drudoca.MpqReader.StreamReaders
             return result;
         }
 
+        public int ReadInt16()
+        {
+            var result = BitConverter.ToInt16(Buffer[_index..(_index + 2)]);
+            _index += 2;
+            return result;
+        }
+
         public int ReadInt32()
         {
             var result = BitConverter.ToInt32(Buffer[_index..(_index + 4)]);

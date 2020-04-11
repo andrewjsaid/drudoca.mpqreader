@@ -1,6 +1,6 @@
 ﻿namespace Drudoca.MpqReader.Structures
 {
-    public class MpqBlockTable
+    internal class MpqBlockTable
     {
 
         public MpqBlockTable(

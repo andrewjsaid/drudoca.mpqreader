@@ -1,6 +1,6 @@
 ﻿namespace Drudoca.MpqReader.Structures
 {
-    public class MpqHashTable
+    internal class MpqHashTable
     {
 
         public MpqHashTable(
