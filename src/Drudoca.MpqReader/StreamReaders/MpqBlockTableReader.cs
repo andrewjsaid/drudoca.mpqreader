@@ -9,7 +9,7 @@ namespace Drudoca.MpqReader.StreamReaders
         private IMd5Validation _md5Validation;
         private IEncryption _encryption;
 
-        private const uint _encryptionKey = 0xec83b3a3;
+        private const uint _encryptionKey = 0xec83b3a3; // HashFileKey("(block table)")
 
         public MpqBlockTableReader(IMd5Validation md5Validation, IEncryption encryption)
         {
@@ -23,6 +23,7 @@ namespace Drudoca.MpqReader.StreamReaders
 
             using var ctx = new MpqStreamReaderContext(stream);
             await ctx.ReadAsync(size * count);
+
             if (md5 != null)
             {
                 var isValid = _md5Validation.Check(ctx.Buffer, 0, ctx.BufferSize, md5);
@@ -31,6 +32,7 @@ namespace Drudoca.MpqReader.StreamReaders
                     throw new InvalidDataException("Block table MD5 check failed.");
                 }
             }
+
             _encryption.DecryptInPlace(ctx.Buffer, 0, ctx.BufferSize, _encryptionKey);
 
             var results = new MpqBlockTable[count];

@@ -28,17 +28,20 @@ namespace Drudoca.MpqReader.StreamReaders
         public Task<MpqUserDataHeader?> ReadUserDataHeaderAsync(Stream stream)
             => new MpqUserDataHeaderReader().ReadAsync(stream);
 
+        public Task<MpqHetTable?> ReadHetTableAsync(Stream stream, byte[]? md5)
+            => new MpqHetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
+
+        public Task<MpqBetTable> ReadBetTableAsync(Stream stream, byte[]? md5)
+            => new MpqBetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
+
         public Task<MpqHashTable[]> ReadHashTableAsync(Stream stream, int count, byte[]? md5)
             => new MpqHashTableReader(_md5Validation, _encryption).ReadAsync(stream, count, md5);
 
         public Task<MpqBlockTable[]> ReadBlockTableAsync(Stream stream, int count, byte[]? md5)
             => new MpqBlockTableReader(_md5Validation, _encryption).ReadAsync(stream, count, md5);
 
-        public Task<MpqHetTable?> ReadHetTableAsync(Stream stream, byte[]? md5)
-            => new MpqHetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
-
-        public Task<MpqBetTable> ReadBetTableAsync(Stream stream, byte[]? md5)
-            => new MpqBetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
+        public Task<ushort[]> ReadHiBlockTableAsync(Stream stream, int count, byte[]? md5)
+            => new MpqHiBlockTableReader(_md5Validation).ReadAsync(stream, count, md5);
 
     }
 }

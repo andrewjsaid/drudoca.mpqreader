@@ -14,20 +14,20 @@ namespace Drudoca.MpqReader
 
         private uint[] CreateCryptTable()
         {
-            var result = new uint[0x500];
-
-            var seed = 0x00100001u;
-
-            for (var index1 = 0ul; index1 < 0x100; index1++)
+            unchecked
             {
-                var index2 = index1;
-                for (var i = 0; i < 5; i++)
-                {
-                    uint temp1;
-                    uint temp2;
+                var result = new uint[0x500];
 
-                    unchecked
+                var seed = 0x00100001u;
+
+                for (var index1 = 0ul; index1 < 0x100; index1++)
+                {
+                    var index2 = index1;
+                    for (var i = 0; i < 5; i++)
                     {
+                        uint temp1;
+                        uint temp2;
+
                         seed = (seed * 125 + 3) % 0x2AAAAB;
                         temp1 = (seed & 0xFFFFu) << 0x10;
 
@@ -38,19 +38,37 @@ namespace Drudoca.MpqReader
                         index2 += 0x100;
                     }
                 }
-            }
 
-            return result;
+                return result;
+            }
+        }
+
+        public uint Hash(string text, int hashType)
+        {
+            unchecked
+            {
+                uint seed1 = 0x7FED7FED;
+                uint seed2 = 0xEEEEEEEE;
+
+                for (int i = 0; i < text.Length; i++)
+                {
+                    var c = char.ToUpper(text[i]);
+                    seed1 = _cryptTable[(hashType << 8) + c] ^ (seed1 + seed2);
+                    seed2 = c + seed1 + seed2 + (seed2 << 5) + 3;
+                }
+
+                return seed1;
+            }
         }
 
         public void DecryptInPlace(byte[] data, int offset, int length, uint key)
         {
-            uint seed = 0xEEEEEEEE;
-
-            var end = offset + length;
-            for (int i = offset; i < end; i += 4)
+            unchecked
             {
-                unchecked
+                uint seed = 0xEEEEEEEE;
+
+                var end = offset + length;
+                for (int i = offset; i < end; i += 4)
                 {
                     seed += _cryptTable[0x400 + (key & 0xFF)];
 
@@ -66,6 +84,5 @@ namespace Drudoca.MpqReader
                 }
             }
         }
-
     }
 }

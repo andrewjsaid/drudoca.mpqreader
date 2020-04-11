@@ -45,5 +45,9 @@
         public const ushort LanguageKorean = 0x412;
         public const ushort LanguagePortuguese = 0x416;
         public const ushort LanguageEnglishUK = 0x809;
+
+        public const string ListFileFileName = "(listfile)";
+        public const string SignatureFileName = "(signature)";
+        public const string AttributesFileName = "(attributes)";
     }
 }
