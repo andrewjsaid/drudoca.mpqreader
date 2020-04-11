@@ -1,4 +1,4 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
     public class MpqBlockTable
     {

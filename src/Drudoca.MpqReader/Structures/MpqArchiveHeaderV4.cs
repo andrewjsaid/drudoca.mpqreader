@@ -1,9 +1,9 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
-    internal class MpqFileHeaderV4 : MpqFileHeaderV3
+    internal class MpqArchiveHeaderV4 : MpqArchiveHeaderV3
     {
 
-        public MpqFileHeaderV4(
+        public MpqArchiveHeaderV4(
             int signature,
             int headerSize,
             int archiveSize,
@@ -13,17 +13,17 @@
             int blockTableOffset,
             int hashTableCount,
             int blockTableCount,
-            ulong hiBlockTableOffset,
+            long hiBlockTableOffset,
             ushort hashTableOffsetHi,
             ushort blockTableOffsetHi,
-            ulong archiveSize2,
-            ulong betTableOffset,
-            ulong hetTableOffset,
-            ulong hashTableSize,
-            ulong blockTableSize,
-            ulong hiBlockTableSize,
-            ulong hetTableSize,
-            ulong betTableSize,
+            long archiveSize2,
+            long betTableOffset,
+            long hetTableOffset,
+            long hashTableSize,
+            long blockTableSize,
+            long hiBlockTableSize,
+            long hetTableSize,
+            long betTableSize,
             int rawChunkSize,
             byte[] md5BlockTable,
             byte[] md5HashTable,
@@ -55,27 +55,27 @@
         /// <summary>
         /// Compressed size of the hash table
         /// </summary>
-        public ulong HashTableSize { get; }
+        public long HashTableSize { get; }
 
         /// <summary>
         /// Compressed size of the block table
         /// </summary>
-        public ulong BlockTableSize { get; }
+        public long BlockTableSize { get; }
 
         /// <summary>
         /// Compressed size of the hi-block table
         /// </summary>
-        public ulong HiBlockTableSize { get; }
+        public long HiBlockTableSize { get; }
 
         /// <summary>
         /// Compressed size of the HET block
         /// </summary>
-        public ulong HetTableSize { get; }
+        public long HetTableSize { get; }
 
         /// <summary>
         /// Compressed size of the BET block
         /// </summary>
-        public ulong BetTableSize { get; }
+        public long BetTableSize { get; }
 
         /// <summary>
         /// Size of raw data chunk to calculate MD5.

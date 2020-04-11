@@ -1,25 +1,22 @@
 ﻿using System;
-using System.IO;
 using System.Threading.Tasks;
-using Drudoca.MpqReader.Headers;
+using Drudoca.MpqReader.Structures;
 
 namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqBlockTableReader : MpqStreamReaderBase<MpqBlockTable>
+    internal class MpqBlockTableReader : IStructureReader<MpqBlockTable>
     {
-        public MpqBlockTableReader(Stream stream) : base(stream) { }
+        public int InitialSize => 16;
 
-        protected override int InitialSize => throw new NotImplementedException();
+        public ValueTask<MpqBlockTable> ReadAsync(MpqStreamReaderContext ctx)
+            => new ValueTask<MpqBlockTable>(Read(ctx));
 
-        protected override ValueTask<MpqBlockTable> ReadAsync(ByteArrayReader bar)
-            => new ValueTask<MpqBlockTable>(Read(bar));
-
-        protected MpqBlockTable Read(ByteArrayReader bar)
+        private MpqBlockTable Read(MpqStreamReaderContext ctx)
         {
-            var fileOffset = bar.ReadInt32();
-            var compressedFileSize = bar.ReadInt32();
-            var fileSize = bar.ReadInt32();
-            var flags = bar.ReadInt32();
+            var fileOffset = ctx.ReadInt32();
+            var compressedFileSize = ctx.ReadInt32();
+            var fileSize = ctx.ReadInt32();
+            var flags = ctx.ReadInt32();
 
             return new MpqBlockTable(
                 fileOffset,

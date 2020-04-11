@@ -17,6 +17,20 @@
         /// </summary>
         public const int MpqHeaderSignature = 0x1A51504D;
 
+        /// <summary>
+        /// Indicates the start of the Het Table.
+        /// Represents 'MPQ\x1A'
+        /// i.e. ((byte)'H' + ((byte)'E' << 8) + ((byte)'T' << 16) + (0x1A << 24)).ToString("X")
+        /// </summary>
+        public const int MpqHetTableSignature = 0x1A544548;
+
+        /// <summary>
+        /// Indicates the start of the Het Table.
+        /// Represents 'MPQ\x1A'
+        /// i.e. ((byte)'B' + ((byte)'E' << 8) + ((byte)'T' << 16) + (0x1A << 24)).ToString("X")
+        /// </summary>
+        public const int MpqBetTableSignature = 0x1A544542;
+
         public const ushort LanguageNeutral = 0;
         public const ushort LanguageCzech = 0x405;
         public const ushort LanguageEnglish = 0x409;

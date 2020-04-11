@@ -1,19 +1,16 @@
-﻿using System.IO;
-using System.Threading.Tasks;
-using Drudoca.MpqReader.Headers;
+﻿using System.Threading.Tasks;
+using Drudoca.MpqReader.Structures;
 
 namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqHashTableReader : MpqStreamReaderBase<MpqHashTable>
+    internal class MpqHashTableReader : IStructureReader<MpqHashTable>
     {
-        public MpqHashTableReader(Stream stream) : base(stream) { }
+        public int InitialSize => 16;
 
-        protected override int InitialSize => 16;
+        public ValueTask<MpqHashTable> ReadAsync(MpqStreamReaderContext ctx)
+            => new ValueTask<MpqHashTable>(Read(ctx));
 
-        protected override ValueTask<MpqHashTable> ReadAsync(ByteArrayReader bar)
-            => new ValueTask<MpqHashTable>(Read(bar));
-
-        protected MpqHashTable Read(ByteArrayReader bar)
+        private MpqHashTable Read(MpqStreamReaderContext bar)
         {
             var nameHash1 = bar.ReadInt32();
             var nameHash2 = bar.ReadInt32();

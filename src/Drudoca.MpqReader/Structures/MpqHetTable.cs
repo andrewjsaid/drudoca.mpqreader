@@ -1,4 +1,4 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
     internal class MpqHetTable
     {
@@ -15,7 +15,7 @@
             int indexExtraBitSize,
             int indexBitSize,
             int blockTableSize,
-            byte[] hetHashTable,
+            byte[] hashTable,
             long[] fileIndices)
         {
             Signature = signature;
@@ -29,7 +29,7 @@
             IndexExtraBitSize = indexExtraBitSize;
             IndexBitSize = indexBitSize;
             BlockTableSize = blockTableSize;
-            HetHashTable = hetHashTable;
+            HashTable = hashTable;
             FileIndices = fileIndices;
         }
 
@@ -89,10 +89,9 @@
         public int BlockTableSize { get; }
 
         /// <summary>
-        /// HET hash table. Each entry is 8 bits.
-        /// Thereare <see cref="HashTableSize"/> entries.
+        /// HET hash table.
         /// </summary>
-        public byte[] HetHashTable { get; }
+        public byte[] HashTable { get; }
 
         /// <summary>
         /// Array of file indices.

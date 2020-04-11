@@ -1,9 +1,9 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
-    internal class MpqFileHeaderV2 : MpqFileHeader
+    internal class MpqArchiveHeaderV2 : MpqArchiveHeader
     {
 
-        public MpqFileHeaderV2(
+        public MpqArchiveHeaderV2(
             int signature,
             int headerSize,
             int archiveSize,
@@ -13,7 +13,7 @@
             int blockTableOffset,
             int hashTableCount,
             int blockTableCount,
-            ulong hiBlockTableOffset,
+            long hiBlockTableOffset,
             ushort hashTableOffsetHi,
             ushort blockTableOffsetHi)
             : base(signature, headerSize, archiveSize,
@@ -29,7 +29,7 @@
         /// <summary>
         /// Offset to the beginning of array of 16-bit high parts of file offsets.
         /// </summary>
-        public ulong HiBlockTableOffset { get; }
+        public long HiBlockTableOffset { get; }
 
         /// <summary>
         /// High 16 bits of the hash table offset for large archives.

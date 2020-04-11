@@ -1,9 +1,9 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
-    internal class MpqFileHeader
+    internal class MpqArchiveHeader
     {
 
-        public MpqFileHeader(
+        public MpqArchiveHeader(
             int signature,
             int headerSize,
             int archiveSize,

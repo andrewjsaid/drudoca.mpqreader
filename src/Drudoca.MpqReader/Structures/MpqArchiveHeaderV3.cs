@@ -1,9 +1,9 @@
-﻿namespace Drudoca.MpqReader.Headers
+﻿namespace Drudoca.MpqReader.Structures
 {
-    internal class MpqFileHeaderV3 : MpqFileHeaderV2
+    internal class MpqArchiveHeaderV3 : MpqArchiveHeaderV2
     {
 
-        public MpqFileHeaderV3(
+        public MpqArchiveHeaderV3(
             int signature,
             int headerSize,
             int archiveSize,
@@ -13,12 +13,12 @@
             int blockTableOffset,
             int hashTableCount,
             int blockTableCount,
-            ulong hiBlockTableOffset,
+            long hiBlockTableOffset,
             ushort hashTableOffsetHi,
             ushort blockTableOffsetHi,
-            ulong archiveSize2,
-            ulong betTableOffset,
-            ulong hetTableOffset)
+            long archiveSize2,
+            long betTableOffset,
+            long hetTableOffset)
             : base(signature, headerSize, archiveSize,
                    formatVersion, blockSize,
                    hashTableOffset, blockTableOffset,
@@ -33,16 +33,16 @@
         /// <summary>
         /// 64-bit version of the archive size
         /// </summary>
-        public ulong ArchiveSize2 { get; }
+        public long ArchiveSize2 { get; }
 
         /// <summary>
         /// 64-bit position of the BET table
         /// </summary>
-        public ulong BetTableOffset { get; }
+        public long BetTableOffset { get; }
 
         /// <summary>
         /// 64-bit position of the HET table
         /// </summary>
-        public ulong HetTableOffset { get; }
+        public long HetTableOffset { get; }
     }
 }

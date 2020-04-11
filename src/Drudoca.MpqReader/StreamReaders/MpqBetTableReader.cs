@@ -4,11 +4,11 @@ using Drudoca.MpqReader.Structures;
 
 namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqHetTableReader : IStructureReader<MpqHetTable?>
+    internal class MpqBetTableReader : IStructureReader<MpqBetTable>
     {
         public int InitialSize => throw new NotImplementedException();
 
-        public ValueTask<MpqHetTable?> ReadAsync(MpqStreamReaderContext ctx)
+        public ValueTask<MpqBetTable> ReadAsync(MpqStreamReaderContext ctx)
         {
             throw new NotImplementedException();
         }

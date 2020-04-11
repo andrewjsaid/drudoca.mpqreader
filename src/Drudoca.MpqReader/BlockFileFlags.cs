@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Drudoca.MpqReader.Headers
+namespace Drudoca.MpqReader
 {
     [Flags]
     internal enum BlockFileFlags

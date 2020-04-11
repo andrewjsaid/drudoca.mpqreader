@@ -2,30 +2,28 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
-using Drudoca.MpqReader.Headers;
+using Drudoca.MpqReader.Structures;
 
-namespace Drudoca.MpqReader
+namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqFileHeaderStreamReader : MpqStreamReaderBase<MpqFileHeader?>
+    internal class MpqArchiveHeaderReader : IStructureReader<MpqArchiveHeader?>
     {
-        public MpqFileHeaderStreamReader(Stream stream) : base(stream) { }
+        public int InitialSize => 32;
 
-        protected override int InitialSize => 32;
-
-        protected override async ValueTask<MpqFileHeader?> ReadAsync(ByteArrayReader bar)
+        public async ValueTask<MpqArchiveHeader?> ReadAsync(MpqStreamReaderContext ctx)
         {
-            const int maxSupportedVersion = 4;
+            const int maxSupportedVersion = 3;
             const int maxHeaderSize = 208;
 
-            var signature = bar.ReadInt32();
+            var signature = ctx.ReadInt32();
             if (signature != MpqConstants.MpqHeaderSignature)
             {
                 return null;
             }
 
-            var headerSize = bar.ReadInt32();
-            var archiveSize = bar.ReadInt32();
-            var formatVersion = bar.ReadUInt16();
+            var headerSize = ctx.ReadInt32();
+            var archiveSize = ctx.ReadInt32();
+            var formatVersion = ctx.ReadUInt16();
 
             if (formatVersion < 0)
             {
@@ -36,39 +34,39 @@ namespace Drudoca.MpqReader
             {
                 throw new NotSupportedException($"Version {formatVersion} is not supported. Support is only up to version {maxSupportedVersion}.");
             }
-
+            
             if (headerSize > maxHeaderSize)
             {
                 throw new InvalidDataException($"Header size {headerSize} is too big.");
             }
 
-            if (headerSize > BufferSize)
+            if (headerSize > ctx.BufferSize)
             {
-                await GrowAsync(headerSize - BufferSize);
+                await ctx.GrowAsync(headerSize - ctx.BufferSize);
             }
 
-            var blockSize = bar.ReadUInt16();
-            var hashTableOffset = bar.ReadInt32();
-            var blockTableOffset = bar.ReadInt32();
-            var hashTableCount = bar.ReadInt32();
-            var blockTableCount = bar.ReadInt32();
+            var blockSize = ctx.ReadUInt16();
+            var hashTableOffset = ctx.ReadInt32();
+            var blockTableOffset = ctx.ReadInt32();
+            var hashTableCount = ctx.ReadInt32();
+            var blockTableCount = ctx.ReadInt32();
 
-            if (formatVersion == 1)
+            if (formatVersion == 0)
             {
-                return new MpqFileHeader(
+                return new MpqArchiveHeader(
                     signature, headerSize, archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
                     hashTableCount, blockTableCount);
             }
 
-            var hiBlockTableOffset = bar.ReadUInt64();
-            var hashTableOffsetHi = bar.ReadUInt16();
-            var blockTableOffsetHi = bar.ReadUInt16();
+            var hiBlockTableOffset = ctx.ReadInt64();
+            var hashTableOffsetHi = ctx.ReadUInt16();
+            var blockTableOffsetHi = ctx.ReadUInt16();
 
-            if (formatVersion == 2)
+            if (formatVersion == 1)
             {
-                return new MpqFileHeaderV2(
+                return new MpqArchiveHeaderV2(
                     signature, headerSize, archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
@@ -76,13 +74,13 @@ namespace Drudoca.MpqReader
                     hiBlockTableOffset, hashTableOffsetHi, blockTableOffsetHi);
             }
 
-            var arhiveSize2 = bar.ReadUInt64();
-            var betTableOffset = bar.ReadUInt64();
-            var hetTableOffset = bar.ReadUInt64();
+            var arhiveSize2 = ctx.ReadInt64();
+            var betTableOffset = ctx.ReadInt64();
+            var hetTableOffset = ctx.ReadInt64();
 
-            if (formatVersion == 3)
+            if (formatVersion == 2)
             {
-                return new MpqFileHeaderV3(
+                return new MpqArchiveHeaderV3(
                     signature, headerSize, archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
@@ -91,32 +89,32 @@ namespace Drudoca.MpqReader
                     arhiveSize2, betTableOffset, hetTableOffset);
             }
 
-            var hashTableSize = bar.ReadUInt64();
-            var blockTableSize = bar.ReadUInt64();
-            var hiBlockTableSize = bar.ReadUInt64();
-            var hetTableSize = bar.ReadUInt64();
-            var betTableSize = bar.ReadUInt64();
+            var hashTableSize = ctx.ReadInt64();
+            var blockTableSize = ctx.ReadInt64();
+            var hiBlockTableSize = ctx.ReadInt64();
+            var hetTableSize = ctx.ReadInt64();
+            var betTableSize = ctx.ReadInt64();
 
-            var rawChunkSize = bar.ReadInt32();
+            var rawChunkSize = ctx.ReadInt32();
 
             const int md5DigestSize = 16;
-            var md5BlockTable = bar.ReadByteArray(md5DigestSize);
-            var md5HashTable = bar.ReadByteArray(md5DigestSize);
-            var md5HiBlockTable = bar.ReadByteArray(md5DigestSize);
-            var md5BetTable = bar.ReadByteArray(md5DigestSize);
-            var md5HetTable = bar.ReadByteArray(md5DigestSize);
-            var md5MpqHeader = bar.ReadByteArray(md5DigestSize);
+            var md5BlockTable = ctx.ReadByteArray(md5DigestSize);
+            var md5HashTable = ctx.ReadByteArray(md5DigestSize);
+            var md5HiBlockTable = ctx.ReadByteArray(md5DigestSize);
+            var md5BetTable = ctx.ReadByteArray(md5DigestSize);
+            var md5HetTable = ctx.ReadByteArray(md5DigestSize);
+            var md5MpqHeader = ctx.ReadByteArray(md5DigestSize);
 
             const int lengthOfDataToHash = 208 - 16; // Everything except the last md5;
-            var isValid = Md5Validation.IsValid(Buffer, 0, lengthOfDataToHash, md5MpqHeader);
+            var isValid = Md5Validation.IsValid(ctx.Buffer, 0, lengthOfDataToHash, md5MpqHeader);
             if (!isValid)
             {
                 throw new InvalidDataException("Incorrect header (based on hash comparison).");
             }
 
-            if (formatVersion == 4)
+            if (formatVersion == 3)
             {
-                return new MpqFileHeaderV4(
+                return new MpqArchiveHeaderV4(
                     signature, headerSize, archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
