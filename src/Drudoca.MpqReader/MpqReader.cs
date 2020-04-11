@@ -11,7 +11,7 @@ namespace Drudoca.MpqReader
 
         public async Task<MpqArchive> ReadAsync(Stream stream)
         {
-            var sr = new MpqStreamReader();
+            var sr = new MpqStreamReader(new Md5Validation(), new Encryption());
 
             long userDataHeaderOffset = 0;
 
@@ -44,12 +44,20 @@ namespace Drudoca.MpqReader
             MpqArchiveHeader archiveHeader)
         {
             long tableOffset = archiveHeader.HashTableOffset;
+            byte[]? md5 = null;
+
             if (archiveHeader is MpqArchiveHeaderV2 archiveHeader2)
             {
                 tableOffset = ((long)archiveHeader2.HashTableOffsetHi << 32) | tableOffset;
             }
+
+            if (archiveHeader is MpqArchiveHeaderV4 archiveHeader4)
+            {
+                md5 = archiveHeader4.Md5HashTable;
+            }
+
             stream.Seek(archiveOffset + tableOffset, SeekOrigin.Begin);
-            var result = await sr.ReadHashTableAsync(stream, archiveHeader.HashTableCount);
+            var result = await sr.ReadHashTableAsync(stream, archiveHeader.HashTableCount, md5);
             return result;
         }
 
@@ -60,12 +68,20 @@ namespace Drudoca.MpqReader
             MpqArchiveHeader archiveHeader)
         {
             long tableOffset = archiveHeader.BlockTableOffset;
+            byte[]? md5 = null;
+
             if (archiveHeader is MpqArchiveHeaderV2 archiveHeader2)
             {
                 tableOffset = ((long)archiveHeader2.BlockTableOffsetHi << 32) | tableOffset;
             }
+
+            if (archiveHeader is MpqArchiveHeaderV4 archiveHeader4)
+            {
+                md5 = archiveHeader4.Md5BlockTable;
+            }
+
             stream.Seek(archiveOffset + tableOffset, SeekOrigin.Begin);
-            var result = await sr.ReadBlockTableAsync(stream, archiveHeader.BlockTableCount);
+            var result = await sr.ReadBlockTableAsync(stream, archiveHeader.BlockTableCount, md5);
             return result;
         }
 

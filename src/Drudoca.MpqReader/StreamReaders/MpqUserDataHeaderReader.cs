@@ -1,17 +1,16 @@
-﻿using System.Threading.Tasks;
+﻿using System.IO;
+using System.Threading.Tasks;
 using Drudoca.MpqReader.Structures;
 
 namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqUserDataHeaderReader : IStructureReader<MpqUserDataHeader?>
+    internal class MpqUserDataHeaderReader
     {
-        public int InitialSize => 16;
-
-        public ValueTask<MpqUserDataHeader?> ReadAsync(MpqStreamReaderContext ctx)
-            => new ValueTask<MpqUserDataHeader?>(Read(ctx));
-
-        private MpqUserDataHeader? Read(MpqStreamReaderContext ctx)
+        public async Task<MpqUserDataHeader?> ReadAsync(Stream stream)
         {
+            using var ctx = new MpqStreamReaderContext(stream);
+            await ctx.ReadAsync(16);
+
             var signature = ctx.ReadInt32();
             if (signature != MpqConstants.MpqUserDataSignature)
                 return null;

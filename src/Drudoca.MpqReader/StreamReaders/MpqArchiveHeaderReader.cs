@@ -6,14 +6,23 @@ using Drudoca.MpqReader.Structures;
 
 namespace Drudoca.MpqReader.StreamReaders
 {
-    internal class MpqArchiveHeaderReader : IStructureReader<MpqArchiveHeader?>
+    internal class MpqArchiveHeaderReader
     {
-        public int InitialSize => 32;
+        private IMd5Validation _md5Validation;
 
-        public async ValueTask<MpqArchiveHeader?> ReadAsync(MpqStreamReaderContext ctx)
+        public MpqArchiveHeaderReader(IMd5Validation md5Validation)
         {
+            _md5Validation = md5Validation;
+        }
+
+        public async Task<MpqArchiveHeader?> ReadAsync(Stream stream)
+        {
+            const int initialSize = 32;
             const int maxSupportedVersion = 3;
             const int maxHeaderSize = 208;
+
+            using var ctx = new MpqStreamReaderContext(stream);
+            await ctx.ReadAsync(initialSize);
 
             var signature = ctx.ReadInt32();
             if (signature != MpqConstants.MpqHeaderSignature)
@@ -42,7 +51,7 @@ namespace Drudoca.MpqReader.StreamReaders
 
             if (headerSize > ctx.BufferSize)
             {
-                await ctx.GrowAsync(headerSize - ctx.BufferSize);
+                await ctx.ReadAsync(headerSize - ctx.BufferSize);
             }
 
             var blockSize = ctx.ReadUInt16();
@@ -106,10 +115,10 @@ namespace Drudoca.MpqReader.StreamReaders
             var md5MpqHeader = ctx.ReadByteArray(md5DigestSize);
 
             const int lengthOfDataToHash = 208 - 16; // Everything except the last md5;
-            var isValid = Md5Validation.IsValid(ctx.Buffer, 0, lengthOfDataToHash, md5MpqHeader);
+            var isValid = _md5Validation.Check(ctx.Buffer, 0, lengthOfDataToHash, md5MpqHeader);
             if (!isValid)
             {
-                throw new InvalidDataException("Incorrect header (based on hash comparison).");
+                throw new InvalidDataException("Block table MD5 check failed.");
             }
 
             if (formatVersion == 3)

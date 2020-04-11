@@ -7,37 +7,29 @@ namespace Drudoca.MpqReader.StreamReaders
 {
     internal class MpqStreamReaderContext : IDisposable
     {
-        private Stream _stream;
+        private readonly Stream _stream;
 
-        public byte[] Buffer { get; private set; }
+        public byte[] Buffer { get; private set; } = Array.Empty<byte>();
         public int BufferSize { get; private set; }
 
         private int _index;
 
-        public MpqStreamReaderContext(Stream stream, int initialBufferSize)
+        public MpqStreamReaderContext(Stream stream)
         {
             _stream = stream;
-            Buffer = ArrayPool<byte>.Shared.Rent(initialBufferSize);
-            BufferSize = initialBufferSize;
         }
 
-        public async Task SetupAsync()
-        {
-            var readResult = await _stream.ReadAsync(Buffer, 0, BufferSize);
-            if (readResult != BufferSize)
-            {
-                throw new InvalidDataException($"Could not read enough bytes.");
-            }
-        }
-
-        public async Task GrowAsync(int length)
+        public async Task ReadAsync(int length)
         {
             if (Buffer.Length < BufferSize + length)
             {
                 // Buffer is too small - get another one
                 var newBuffer = ArrayPool<byte>.Shared.Rent(BufferSize + length);
-                Array.Copy(Buffer, newBuffer, BufferSize);
-                ArrayPool<byte>.Shared.Return(Buffer);
+                if (Buffer.Length > 0)
+                {
+                    Array.Copy(Buffer, newBuffer, BufferSize);
+                    ArrayPool<byte>.Shared.Return(Buffer);
+                }
                 Buffer = newBuffer;
             }
 

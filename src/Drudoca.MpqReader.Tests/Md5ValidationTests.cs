@@ -55,7 +55,8 @@ namespace Drudoca.MpqReader.Tests
                 hash.Add((byte)b);
             }
 
-            var result = Md5Validation.IsValid(data, 0, data.Length, hash.ToArray());
+            var md5Validation = new Md5Validation();
+            var result = md5Validation.Check(data, 0, data.Length, hash.ToArray());
             return result;
         }
 

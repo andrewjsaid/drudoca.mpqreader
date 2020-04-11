@@ -3,10 +3,10 @@ using System.Security.Cryptography;
 
 namespace Drudoca.MpqReader
 {
-    internal static class Md5Validation
+    internal class Md5Validation : IMd5Validation
     {
 
-        public static bool IsValid(byte[] data, int offset, int length, byte[] hash)
+        public bool Check(byte[] data, int offset, int length, byte[] hash)
         {
             const int Md5DigestSize = 16; // 16 byes
             Debug.Assert(hash.Length == Md5DigestSize);
