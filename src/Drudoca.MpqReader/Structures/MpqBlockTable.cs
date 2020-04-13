@@ -4,10 +4,10 @@
     {
 
         public MpqBlockTable(
-            int fileOffset,
-            int compressedFileSize,
-            int fileSize,
-            int flags)
+            long fileOffset,
+            long compressedFileSize,
+            long fileSize,
+            uint flags)
         {
             FileOffset = fileOffset;
             CompressedFileSize = compressedFileSize;
@@ -18,22 +18,22 @@
         /// <summary>
         /// Offset of the beginning of the file data, relative to the beginning of the archive.
         /// </summary>
-        public int FileOffset { get; }
+        public long FileOffset { get; }
 
         /// <summary>
-        /// Compressed File Size
+        /// Compressed File Size (as found in archive).
         /// </summary>
-        public int CompressedFileSize { get; }
+        public long CompressedFileSize { get; }
 
         /// <summary>
         /// File Size
         /// </summary>
-        public int FileSize { get; }
+        public long FileSize { get; }
 
         /// <summary>
         /// Flags for the file.
         /// </summary>
-        public int Flags { get; }
+        public uint Flags { get; }
 
     }
 }

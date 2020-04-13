@@ -1,16 +1,14 @@
-﻿## MPQ File Format Specifications
+﻿### What is this project?
 
-There doesn't seem to be any official (Blizzard) specification for how the file format works,
-however there are many unofficial community descriptions
 
-I have read the following:
+### Alternatives
 
-http://www.zezula.net/en/mpq/mpqformat.html
+- [StormLib](https://github.com/ladislav-zezula/StormLib) is the most widely used reader and writer for MPQ files.
+- [StormLibSharp](https://github.com/robpaveza/stormlibsharp) is a .NET wrapper for StormLib.
 
-https://wowdev.wiki/MPQ
+### MPQ File Format Specifications
 
-https://github.com/ladislav-zezula/StormLib/blob/master/doc/The%20MoPaQ%20File%20Format%201.0.txt
+The following sources were used to understand the MPQ format and develop this library.
 
-## Goals
-1. Implement reading MPQ archives. I only want to implement enough to parse Starcraft II replays, at least for now.
-2. Keep performance a top priority.
+- http://www.zezula.net/en/mpq/mpqformat.html
+- https://github.com/ladislav-zezula/StormLib

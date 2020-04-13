@@ -4,8 +4,6 @@
     {
 
         public MpqArchiveHeaderV4(
-            int signature,
-            int headerSize,
             int archiveSize,
             ushort formatVersion,
             ushort blockSize,
@@ -31,7 +29,7 @@
             byte[] md5BetTable,
             byte[] md5HetTable,
             byte[] md5MpqHeader)
-            : base(signature, headerSize, archiveSize,
+            : base(archiveSize,
                    formatVersion, blockSize,
                    hashTableOffset, blockTableOffset,
                    hashTableCount, blockTableCount,

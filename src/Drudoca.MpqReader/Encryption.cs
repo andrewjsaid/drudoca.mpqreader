@@ -20,7 +20,7 @@ namespace Drudoca.MpqReader
 
                 var seed = 0x00100001u;
 
-                for (var index1 = 0ul; index1 < 0x100; index1++)
+                for (var index1 = 0u; index1 < 0x100; index1++)
                 {
                     var index2 = index1;
                     for (var i = 0; i < 5; i++)

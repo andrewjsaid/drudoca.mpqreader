@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Threading.Tasks;
 using Drudoca.MpqReader.Structures;
 
@@ -51,7 +52,7 @@ namespace Drudoca.MpqReader.StreamReaders
             var fileOffset = ctx.ReadInt32();
             var compressedFileSize = ctx.ReadInt32();
             var fileSize = ctx.ReadInt32();
-            var flags = ctx.ReadInt32();
+            var flags = ctx.ReadUInt32();
 
             return new MpqBlockTable(
                 fileOffset,

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 using Drudoca.MpqReader.StreamReaders;
 using Drudoca.MpqReader.Structures;
@@ -11,6 +12,11 @@ namespace Drudoca.MpqReader
 
         public async Task<MpqArchive> ReadAsync(Stream stream)
         {
+            if(!BitConverter.IsLittleEndian)
+            {
+                throw new NotSupportedException("This library only works on LittleEndian systems.");
+            }
+
             var sr = new MpqStreamReader(new Md5Validation(), new Encryption());
 
             long userDataHeaderOffset = 0;

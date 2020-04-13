@@ -4,8 +4,6 @@
     {
 
         public MpqArchiveHeader(
-            int signature,
-            int headerSize,
             int archiveSize,
             ushort formatVersion,
             ushort blockSize,
@@ -14,8 +12,6 @@
             int hashTableCount,
             int blockTableCount)
         {
-            Signature = signature;
-            HeaderSize = headerSize;
             ArchiveSize = archiveSize;
             FormatVersion = formatVersion;
             BlockSize = blockSize;
@@ -24,16 +20,6 @@
             HashTableCount = hashTableCount;
             BlockTableCount = blockTableCount;
         }
-
-        /// <summary>
-        /// The ID_MPQ ('MPQ\x1A') signature
-        /// </summary>
-        public int Signature { get; }
-
-        /// <summary>
-        /// Size of the archive header
-        /// </summary>
-        public int HeaderSize { get; }
 
         /// <summary>
         /// Size of MPQ archive

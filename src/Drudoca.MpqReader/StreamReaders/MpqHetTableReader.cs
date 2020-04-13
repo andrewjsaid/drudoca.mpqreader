@@ -59,105 +59,62 @@ namespace Drudoca.MpqReader.StreamReaders
                 throw new InvalidDataException($"DataSize {dataSize} should be equal to TableSize {tableSize}");
             }
 
+            var numUsedEntries = ctx.ReadInt32();
             var numEntries = ctx.ReadInt32();
-            var numSlots = ctx.ReadInt32();
             var hashEntryBitSize = ctx.ReadInt32();
-            var totalIndexBitSize = ctx.ReadInt32();
-            var indexExtraBitSize = ctx.ReadInt32();
-            var indexBitSize = ctx.ReadInt32();
-            var indexTableSize = ctx.ReadInt32();
+            var totalBetIndexBitSize = ctx.ReadInt32();
+            var extraBetIndexBitSize = ctx.ReadInt32();
+            var betIndexBitSize = ctx.ReadInt32();
+            var betIndexTableSize = ctx.ReadInt32();
 
-            if (dataSize != (8 * 4) + numSlots + indexTableSize)
+            if (dataSize != (8 * 4) + numEntries + betIndexTableSize)
             {
                 throw new InvalidDataException(
-                    $"TableSize {tableSize} should be equal to HeaderSize (32) + NumSlots {numSlots} + IndexTableSize {indexTableSize}");
+                    $"TableSize {tableSize} should be equal to HeaderSize (32) + NumSlots {numEntries} + betIndexTableSize {betIndexTableSize}");
             }
 
-            if (indexTableSize != ((numSlots * totalIndexBitSize) + 7) / 8)
+            if (betIndexTableSize != ((numEntries * totalBetIndexBitSize) + 7) / 8)
             {
                 throw new InvalidDataException(
-                    $"IndexTableSize {indexTableSize} should be predictable from NumSlots {numSlots} and TotalIndexBitSize {totalIndexBitSize}");
+                    $"betIndexTableSize {betIndexTableSize} should be predictable from NumSlots {numEntries} and totalBetIndexBitSize {totalBetIndexBitSize}");
             }
 
-            if (totalIndexBitSize != indexBitSize + indexExtraBitSize)
+            if (totalBetIndexBitSize != betIndexBitSize + extraBetIndexBitSize)
             {
                 throw new InvalidDataException(
-                    $"TotalIndexBitSize {totalIndexBitSize} must be equal to IndexBitSize {indexBitSize} + IndexExtraBitSize {indexExtraBitSize}");
+                    $"TotalIndexBitSize {totalBetIndexBitSize} must be equal to IndexBitSize {betIndexBitSize} + extraBetIndexBitSize {extraBetIndexBitSize}");
             }
 
-            if (indexExtraBitSize != 0)
+            if (extraBetIndexBitSize != 0)
             {
-                throw new NotSupportedException("Not sure what this means");
+                throw new NotSupportedException("Extra bits are not supported");
             }
 
             // First there's the Hash Table (each entry is a byte)
-            var hashTable = new byte[numSlots];
-            for (int i = 0; i < numSlots; i++)
+            var hashTable = new byte[numEntries];
+            for (int i = 0; i < numEntries; i++)
             {
                 hashTable[i] = ctx.ReadByte();
             }
 
-            var fileIndices = ReadFileIndices(ctx, indexTableSize, numSlots, totalIndexBitSize);
+            var betIndices = ReadBetIndices(ctx, betIndexTableSize, numEntries, totalBetIndexBitSize);
 
             return new MpqHetTable(
-                signature, version,
-                dataSize, tableSize,
-                numEntries, numSlots, hashEntryBitSize,
-                totalIndexBitSize, indexExtraBitSize, indexBitSize,
-                indexTableSize, hashTable, fileIndices);
+                numUsedEntries, numEntries, hashTable, betIndices);
         }
 
-        private long[] ReadFileIndices(MpqStreamReaderContext ctx, int numBytesAvailable, int count, int totalIndexBitSize)
+        private long[] ReadBetIndices(MpqStreamReaderContext ctx, int count, int bitSize, int totalBitSize)
         {
             var results = new long[count];
 
-            var q = new BitQueue(0, 0);
+            var offset = 0;
 
             for (int i = 0; i < count; i++)
             {
-                long r = 0;
-
-                var bitsRemaining = totalIndexBitSize;
-
-                while (bitsRemaining > 0)
-                {
-                    if (q.Length == 0)
-                    {
-                        if(numBytesAvailable == 0)
-                        {
-                            throw new InvalidDataException("Not enough bytes available to read");
-                        }
-                        int toRead = Math.Min(numBytesAvailable, 8);
-                        for (int n = 0; n < toRead; n++)
-                        {
-                            q.Append(ctx.ReadByte());
-                        }
-                        numBytesAvailable -= toRead;
-                    }
-
-                    if (q.Length <= bitsRemaining)
-                    {
-                        r <<= q.Length;
-                        bitsRemaining -= q.Length;
-                        r |= q.TakeAll();
-                    }
-                    else // q.Length > bitsRemaining
-                    {
-                        r <<= bitsRemaining;
-                        r |= q.Take(bitsRemaining);
-                        bitsRemaining = 0;
-                    }
-                }
-
-                results[i] = r;
+                var r = ctx.ReadBits(offset, bitSize);
+                results[i] = (long)r;
+                offset += totalBitSize;
             }
-
-            if (numBytesAvailable != 0)
-            {
-                throw new InvalidDataException("Did not read all available bytes.");
-            }
-
-            // Don't know why, but q.Data can be non-zero
 
             return results;
         }

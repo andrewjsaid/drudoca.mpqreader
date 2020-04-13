@@ -31,7 +31,7 @@ namespace Drudoca.MpqReader.StreamReaders
         public Task<MpqHetTable?> ReadHetTableAsync(Stream stream, byte[]? md5)
             => new MpqHetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
 
-        public Task<MpqBetTable> ReadBetTableAsync(Stream stream, byte[]? md5)
+        public Task<MpqBetTable?> ReadBetTableAsync(Stream stream, byte[]? md5)
             => new MpqBetTableReader(_md5Validation, _encryption).ReadAsync(stream, md5);
 
         public Task<MpqHashTable[]> ReadHashTableAsync(Stream stream, int count, byte[]? md5)

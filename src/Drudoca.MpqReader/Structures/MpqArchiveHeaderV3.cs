@@ -4,8 +4,6 @@
     {
 
         public MpqArchiveHeaderV3(
-            int signature,
-            int headerSize,
             int archiveSize,
             ushort formatVersion,
             ushort blockSize,
@@ -19,7 +17,7 @@
             long archiveSize2,
             long betTableOffset,
             long hetTableOffset)
-            : base(signature, headerSize, archiveSize,
+            : base(archiveSize,
                    formatVersion, blockSize,
                    hashTableOffset, blockTableOffset,
                    hashTableCount, blockTableCount,

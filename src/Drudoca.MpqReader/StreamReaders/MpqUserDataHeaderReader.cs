@@ -20,8 +20,7 @@ namespace Drudoca.MpqReader.StreamReaders
             var userDataHeaderSize = ctx.ReadInt32();
 
             return new MpqUserDataHeader(
-                signature, userDataSize,
-                headerOffset, userDataHeaderSize);
+                userDataSize, headerOffset, userDataHeaderSize);
         }
     }
 }

@@ -63,7 +63,7 @@ namespace Drudoca.MpqReader.StreamReaders
             if (formatVersion == 0)
             {
                 return new MpqArchiveHeader(
-                    signature, headerSize, archiveSize,
+                    archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
                     hashTableCount, blockTableCount);
@@ -76,7 +76,7 @@ namespace Drudoca.MpqReader.StreamReaders
             if (formatVersion == 1)
             {
                 return new MpqArchiveHeaderV2(
-                    signature, headerSize, archiveSize,
+                    archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
                     hashTableCount, blockTableCount,
@@ -90,7 +90,7 @@ namespace Drudoca.MpqReader.StreamReaders
             if (formatVersion == 2)
             {
                 return new MpqArchiveHeaderV3(
-                    signature, headerSize, archiveSize,
+                    archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
                     hashTableCount, blockTableCount,
@@ -124,7 +124,7 @@ namespace Drudoca.MpqReader.StreamReaders
             if (formatVersion == 3)
             {
                 return new MpqArchiveHeaderV4(
-                    signature, headerSize, archiveSize,
+                    archiveSize,
                     formatVersion, blockSize,
                     hashTableOffset, blockTableOffset,
                     hashTableCount, blockTableCount,
