@@ -8,7 +8,7 @@ namespace Drudoca.MpqReader.StreamReaders
 {
     internal class MpqArchiveHeaderReader
     {
-        private IMd5Validation _md5Validation;
+        private readonly IMd5Validation _md5Validation;
 
         public MpqArchiveHeaderReader(IMd5Validation md5Validation)
         {

@@ -5,7 +5,7 @@ namespace Drudoca.MpqReader.StreamReaders
 {
     internal class MpqHiBlockTableReader
     {
-        private IMd5Validation _md5Validation;
+        private readonly IMd5Validation _md5Validation;
 
         public MpqHiBlockTableReader(IMd5Validation md5Validation)
         {

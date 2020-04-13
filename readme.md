@@ -12,3 +12,6 @@ The following sources were used to understand the MPQ format and develop this li
 
 - http://www.zezula.net/en/mpq/mpqformat.html
 - https://github.com/ladislav-zezula/StormLib
+
+
+### Unsupported Features

@@ -12,7 +12,7 @@ namespace Drudoca.MpqReader
 
         public async Task<MpqArchive> ReadAsync(Stream stream)
         {
-            if(!BitConverter.IsLittleEndian)
+            if (!BitConverter.IsLittleEndian)
             {
                 throw new NotSupportedException("This library only works on LittleEndian systems.");
             }
@@ -60,11 +60,16 @@ namespace Drudoca.MpqReader
                 if (tableOffset == 0)
                     return null;
 
-                var md5 = (archiveHeader as MpqArchiveHeaderV4)?.Md5HetTable;
-                // TODO AJS: HET Table Compression is not implemented
+                byte[]? md5 = null;
+                long? size = null;
+                if (archiveHeader is MpqArchiveHeaderV4 archiveHeader4)
+                {
+                    md5 = archiveHeader4.Md5HetTable;
+                    size = archiveHeader4.HetTableSize;
+                }
 
                 stream.Seek(archiveOffset + tableOffset, SeekOrigin.Begin);
-                var result = await sr.ReadHetTableAsync(stream, md5);
+                var result = await sr.ReadHetTableAsync(stream, md5, size);
 
                 return result;
             }
@@ -85,11 +90,16 @@ namespace Drudoca.MpqReader
                 if (tableOffset == 0)
                     return null;
 
-                var md5 = (archiveHeader as MpqArchiveHeaderV4)?.Md5BetTable;
-                // TODO AJS: HET Table Compression is not implemented
+                byte[]? md5 = null;
+                long? size = null;
+                if (archiveHeader is MpqArchiveHeaderV4 archiveHeader4)
+                {
+                    md5 = archiveHeader4.Md5BetTable;
+                    size = archiveHeader4.BetTableSize;
+                }
 
                 stream.Seek(archiveOffset + tableOffset, SeekOrigin.Begin);
-                var result = await sr.ReadBetTableAsync(stream, md5);
+                var result = await sr.ReadBetTableAsync(stream, md5, size);
 
                 return result;
             }

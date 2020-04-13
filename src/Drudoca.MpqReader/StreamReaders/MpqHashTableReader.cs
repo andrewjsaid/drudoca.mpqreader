@@ -6,8 +6,8 @@ namespace Drudoca.MpqReader.StreamReaders
 {
     internal class MpqHashTableReader
     {
-        private IMd5Validation _md5Validation;
-        private IEncryption _encryption;
+        private readonly IMd5Validation _md5Validation;
+        private readonly IEncryption _encryption;
 
         private const uint _encryptionKey = 0xc3af3770; // HashFileKey("(hash table)")
 

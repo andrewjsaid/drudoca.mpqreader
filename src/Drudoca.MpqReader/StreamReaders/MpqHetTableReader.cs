@@ -8,8 +8,8 @@ namespace Drudoca.MpqReader.StreamReaders
 {
     internal class MpqHetTableReader
     {
-        private IMd5Validation _md5Validation;
-        private IEncryption _encryption;
+        private readonly IMd5Validation _md5Validation;
+        private readonly IEncryption _encryption;
 
         private const uint _encryptionKey = 0xc3af3770; // HashFileKey("(hash table)")
 
@@ -19,7 +19,7 @@ namespace Drudoca.MpqReader.StreamReaders
             _encryption = encryption;
         }
 
-        public async Task<MpqHetTable?> ReadAsync(Stream stream, byte[]? md5)
+        public async Task<MpqHetTable?> ReadAsync(Stream stream, byte[]? md5, long? size)
         {
             const int headerSize = 12;
 
@@ -39,6 +39,11 @@ namespace Drudoca.MpqReader.StreamReaders
             }
 
             var dataSize = ctx.ReadInt32();
+            if (size < dataSize + headerSize)
+            {
+                throw new NotSupportedException("Compressed Extension Table is not yet supported.");
+            }
+
             await ctx.ReadAsync(dataSize);
 
             if (md5 != null)
