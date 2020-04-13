@@ -95,17 +95,17 @@ namespace Drudoca.MpqReader.StreamReaders
                 throw new NotSupportedException("Extra bits are not supported");
             }
 
-            // First there's the Hash Table (each entry is a byte)
-            var hashTable = new byte[numEntries];
+            // First there's the name hashes (each entry is a byte)
+            var nameHashes = new byte[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                hashTable[i] = ctx.ReadByte();
+                nameHashes[i] = ctx.ReadByte();
             }
 
-            var betIndices = ReadBetIndices(ctx, betIndexTableSize, numEntries, totalBetIndexBitSize);
+            var betIndices = ReadBetIndices(ctx, numEntries, betIndexBitSize, totalBetIndexBitSize);
 
             return new MpqHetTable(
-                numUsedEntries, numEntries, hashTable, betIndices);
+                numUsedEntries, numEntries, nameHashes, betIndices);
         }
 
         private long[] ReadBetIndices(MpqStreamReaderContext ctx, int count, int bitSize, int totalBitSize)

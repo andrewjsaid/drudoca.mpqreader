@@ -31,6 +31,9 @@
         /// </summary>
         public const int MpqBetTableSignature = 0x1A544542;
 
+        public const uint HashTableBlockIndexEmpty = 0xFFFFFFFF;
+        public const uint HashTableBlockIndexDeleted = 0xFFFFFFFE;
+
         public const ushort LanguageNeutral = 0;
         public const ushort LanguageCzech = 0x405;
         public const ushort LanguageEnglish = 0x409;

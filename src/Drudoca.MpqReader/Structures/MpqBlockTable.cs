@@ -21,12 +21,12 @@
         public long FileOffset { get; }
 
         /// <summary>
-        /// Compressed File Size (as found in archive).
+        /// Compressed file size (as stored in archive).
         /// </summary>
         public long CompressedFileSize { get; }
 
         /// <summary>
-        /// File Size
+        /// File size after decompression.
         /// </summary>
         public long FileSize { get; }
 

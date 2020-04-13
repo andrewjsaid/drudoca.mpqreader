@@ -11,9 +11,12 @@ namespace Drudoca.MpqReader.Tests
         public async Task TestMethod1()
         {
             const string path = @"files\g1.SC2REPLAY";
-            using var file = File.OpenRead(path);
+
             var reader = new MpqReader();
-            await reader.ReadAsync(file);
+
+            using var archive = await reader.ReadAsync(File.OpenRead(path), true);
+
+            Assert.IsNotNull(archive);
         }
     }
 }

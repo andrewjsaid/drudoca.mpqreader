@@ -52,7 +52,7 @@ namespace Drudoca.MpqReader.StreamReaders
             var nameHash2 = ctx.ReadInt32();
             var locale = ctx.ReadUInt16();
             var platform = ctx.ReadUInt16();
-            var blockIndex = ctx.ReadInt32();
+            var blockIndex = ctx.ReadUInt32();
 
             return new MpqHashTable(
                 nameHash1,

@@ -3,7 +3,7 @@
 namespace Drudoca.MpqReader
 {
     [Flags]
-    internal enum BlockFileFlags
+    internal enum BlockFileFlags : uint
     {
         /// <summary>
         /// File is compressed using PKWARE Data compression library.
@@ -52,6 +52,6 @@ namespace Drudoca.MpqReader
         /// <summary>
         /// Set if file exists, reset when the file was deleted
         /// </summary>
-        Exists = int.MinValue // 0x80000000
+        Exists = 0x80000000
     }
 }

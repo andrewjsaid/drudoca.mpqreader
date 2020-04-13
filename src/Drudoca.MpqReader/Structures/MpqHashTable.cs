@@ -8,7 +8,7 @@
             int nameHash2,
             ushort locale,
             ushort platform,
-            int blockIndex)
+            uint blockIndex)
         {
             NameHash1 = nameHash1;
             NameHash2 = nameHash2;
@@ -47,6 +47,6 @@
         ///  - FFFFFFFEh: Hash table entry is empty, but was valid at some point (a deleted file).
         ///               Does not terminate searches for a given file.
         /// </summary>
-        public int BlockIndex { get; }
+        public uint BlockIndex { get; }
     }
 }

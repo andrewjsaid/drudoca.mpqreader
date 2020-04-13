@@ -6,12 +6,12 @@
         public MpqHetTable(
             int numUsedEntries,
             int numEntries,
-            byte[] hetHashTable,
+            byte[] nameHashes,
             long[] betIndices)
         {
             NumUsedEntries = numUsedEntries;
             NumEntries = numEntries;
-            HetHashTable = hetHashTable;
+            NameHashes = nameHashes;
             BetIndices = betIndices;
         }
 
@@ -26,9 +26,9 @@
         public int NumEntries { get; }
 
         /// <summary>
-        /// HET hash table.
+        /// HET name hashes.
         /// </summary>
-        public byte[] HetHashTable { get; }
+        public byte[] NameHashes { get; }
 
         /// <summary>
         /// Array of indices to look up in the BET Table.

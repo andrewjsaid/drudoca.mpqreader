@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace Drudoca.MpqReader
     public class MpqReader
     {
 
-        public async Task<MpqArchive> ReadAsync(Stream stream)
+        public async Task<MpqArchive> ReadAsync(Stream stream, bool disposeStream)
         {
             if (!BitConverter.IsLittleEndian)
             {
@@ -43,9 +44,37 @@ namespace Drudoca.MpqReader
             var blockTable = await ReadBlockTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
             var hiBlockTable = await ReadHiBlockTableAsync(stream, archiveHeaderOffset, sr, archiveHeader);
 
+            BasicFileTable? basicFileTable = null;
+            if (hashTable != null && blockTable != null)
+            {
+                var builder = new BasicFileTableBuilder();
+                basicFileTable = builder.Build(hashTable, blockTable, hiBlockTable);
+            }
+            else if ((hashTable == null) != (blockTable == null))
+            {
+                throw new InvalidDataException("Hash Table and Block Table must either both be null or neither");
+            }
+
+
+            ExFileTable? exFileTable = null;
+            if (hetTable != null && betTable != null)
+            {
+                var builder = new ExFileTableBuilder();
+                exFileTable = builder.Build(hetTable, betTable);
+            }
+            else if ((hetTable == null) != (blockTable == null))
+            {
+                throw new InvalidDataException("Het Table and Bet Table must either both be null or neither");
+            }
+
             // TODO: Verify digital signature.
 
-            return null!;
+            var result = new MpqArchive(
+                stream, disposeStream,
+                userDataHeaderOffset, userDataHeader,
+                archiveHeaderOffset, archiveHeader,
+                basicFileTable, exFileTable);
+            return result;
         }
 
         private async Task<MpqHetTable?> ReadHetTableAsync(
@@ -78,6 +107,7 @@ namespace Drudoca.MpqReader
                 return null;
             }
         }
+
         private async Task<MpqBetTable?> ReadBetTableAsync(
             Stream stream,
             long archiveOffset,
@@ -109,13 +139,15 @@ namespace Drudoca.MpqReader
             }
         }
 
-        private async Task<MpqHashTable[]> ReadHashTableAsync(
+        private async Task<MpqHashTable[]?> ReadHashTableAsync(
             Stream stream,
             long archiveOffset,
             MpqStreamReader sr,
             MpqArchiveHeader archiveHeader)
         {
             long tableOffset = archiveHeader.HashTableOffset;
+            if (tableOffset == 0)
+                return null;
 
             if (archiveHeader is MpqArchiveHeaderV2 archiveHeader2)
             {
@@ -129,13 +161,15 @@ namespace Drudoca.MpqReader
             return result;
         }
 
-        private async Task<MpqBlockTable[]> ReadBlockTableAsync(
+        private async Task<MpqBlockTable[]?> ReadBlockTableAsync(
             Stream stream,
             long archiveOffset,
             MpqStreamReader sr,
             MpqArchiveHeader archiveHeader)
         {
             long tableOffset = archiveHeader.BlockTableOffset;
+            if (tableOffset == 0)
+                return null;
 
             if (archiveHeader is MpqArchiveHeaderV2 archiveHeader2)
             {
@@ -173,6 +207,5 @@ namespace Drudoca.MpqReader
                 return null;
             }
         }
-
     }
 }
