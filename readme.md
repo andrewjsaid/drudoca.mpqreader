@@ -24,7 +24,5 @@ if needed.
 - Searching from HET & BET tables.
 - Part Archives and Patches.
 - Archives that do not start with UserData.
-- Encrypted files.
 - Imploded files.
-- Compressed files.
 - Files (within the archive) larger than 4GB

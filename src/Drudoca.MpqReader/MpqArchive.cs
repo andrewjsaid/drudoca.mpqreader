@@ -84,7 +84,7 @@ namespace Drudoca.MpqReader
 
         internal int BlockSize => _archiveHeader.BlockSize;
         internal void Seek(long archiveOffset) => _stream.Seek(_archiveHeaderOffset + archiveOffset, SeekOrigin.Begin);
-        internal Task<int> ReadAsync(byte[] buffer, int offset, int length) => _stream.ReadAsync(buffer, offset, length);
+        internal ValueTask<int> ReadAsync(Memory<byte> memory) => _stream.ReadAsync(memory);
 
     }
 }
