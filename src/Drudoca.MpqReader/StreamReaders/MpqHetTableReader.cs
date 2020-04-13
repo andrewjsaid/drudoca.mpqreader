@@ -9,11 +9,11 @@ namespace Drudoca.MpqReader.StreamReaders
     internal class MpqHetTableReader
     {
         private readonly IMd5Validation _md5Validation;
-        private readonly IEncryption _encryption;
+        private readonly ICrypto _encryption;
 
         private const uint _encryptionKey = 0xc3af3770; // HashFileKey("(hash table)")
 
-        public MpqHetTableReader(IMd5Validation md5Validation, IEncryption encryption)
+        public MpqHetTableReader(IMd5Validation md5Validation, ICrypto encryption)
         {
             _md5Validation = md5Validation;
             _encryption = encryption;
@@ -23,54 +23,56 @@ namespace Drudoca.MpqReader.StreamReaders
         {
             const int headerSize = 12;
 
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(headerSize);
+            using var context = new MpqStreamReaderContext(stream);
+            var r = context.Reader;
 
-            var signature = ctx.ReadInt32();
+            await context.ReadAsync(headerSize);
+
+            var signature = r.ReadInt32();
             if (signature != MpqConstants.MpqHetTableSignature)
             {
                 return null;
             }
 
-            var version = ctx.ReadInt32();
+            var version = r.ReadInt32();
             if (version != 1)
             {
                 throw new NotSupportedException($"Only supporting het table version 1. Version: {version}");
             }
 
-            var dataSize = ctx.ReadInt32();
+            var dataSize = r.ReadInt32();
             if (size < dataSize + headerSize)
             {
                 throw new NotSupportedException("Compressed Extension Table is not yet supported.");
             }
 
-            await ctx.ReadAsync(dataSize);
+            await context.ReadAsync(dataSize);
 
             if (md5 != null)
             {
-                var isValid = _md5Validation.Check(ctx.Buffer, 0, ctx.BufferSize, md5);
+                var isValid = _md5Validation.Check(context.Buffer, 0, context.BufferSize, md5);
                 if (!isValid)
                 {
                     throw new InvalidDataException("Het table MD5 check failed.");
                 }
             }
 
-            _encryption.DecryptInPlace(ctx.Buffer, headerSize, dataSize, _encryptionKey);
+            _encryption.DecryptInPlace(context.Buffer, headerSize, dataSize, _encryptionKey);
 
-            var tableSize = ctx.ReadInt32();
+            var tableSize = r.ReadInt32();
             // Should be equal to dataSize as far as I understand
             if (dataSize != tableSize)
             {
                 throw new InvalidDataException($"DataSize {dataSize} should be equal to TableSize {tableSize}");
             }
 
-            var numUsedEntries = ctx.ReadInt32();
-            var numEntries = ctx.ReadInt32();
-            var hashEntryBitSize = ctx.ReadInt32();
-            var totalBetIndexBitSize = ctx.ReadInt32();
-            var extraBetIndexBitSize = ctx.ReadInt32();
-            var betIndexBitSize = ctx.ReadInt32();
-            var betIndexTableSize = ctx.ReadInt32();
+            var numUsedEntries = r.ReadInt32();
+            var numEntries = r.ReadInt32();
+            var hashEntryBitSize = r.ReadInt32();
+            var totalBetIndexBitSize = r.ReadInt32();
+            var extraBetIndexBitSize = r.ReadInt32();
+            var betIndexBitSize = r.ReadInt32();
+            var betIndexTableSize = r.ReadInt32();
 
             if (dataSize != (8 * 4) + numEntries + betIndexTableSize)
             {
@@ -99,16 +101,16 @@ namespace Drudoca.MpqReader.StreamReaders
             var nameHashes = new byte[numEntries];
             for (int i = 0; i < numEntries; i++)
             {
-                nameHashes[i] = ctx.ReadByte();
+                nameHashes[i] = r.ReadByte();
             }
 
-            var betIndices = ReadBetIndices(ctx, numEntries, betIndexBitSize, totalBetIndexBitSize);
+            var betIndices = ReadBetIndices(r, numEntries, betIndexBitSize, totalBetIndexBitSize);
 
             return new MpqHetTable(
                 numUsedEntries, numEntries, nameHashes, betIndices);
         }
 
-        private long[] ReadBetIndices(MpqStreamReaderContext ctx, int count, int bitSize, int totalBitSize)
+        private long[] ReadBetIndices(ByteArrayReader r, int count, int bitSize, int totalBitSize)
         {
             var results = new long[count];
 
@@ -116,8 +118,8 @@ namespace Drudoca.MpqReader.StreamReaders
 
             for (int i = 0; i < count; i++)
             {
-                var r = ctx.ReadBits(offset, bitSize);
-                results[i] = (long)r;
+                var betTableIndex = r.ReadBits(offset, bitSize);
+                results[i] = (long)betTableIndex;
                 offset += totalBitSize;
             }
 

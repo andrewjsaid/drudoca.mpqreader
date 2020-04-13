@@ -16,12 +16,14 @@ namespace Drudoca.MpqReader.StreamReaders
         {
             const int size = 2;
 
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(size * count);
+            using var context = new MpqStreamReaderContext(stream);
+            var r = context.Reader;
+
+            await context.ReadAsync(size * count);
 
             if (md5 != null)
             {
-                var isValid = _md5Validation.Check(ctx.Buffer, 0, ctx.BufferSize, md5);
+                var isValid = _md5Validation.Check(context.Buffer, 0, context.BufferSize, md5);
                 if (!isValid)
                 {
                     throw new InvalidDataException("Block table MD5 check failed.");
@@ -32,7 +34,7 @@ namespace Drudoca.MpqReader.StreamReaders
 
             for (int i = 0; i < count; i++)
             {
-                var record = ctx.ReadUInt16();
+                var record = r.ReadUInt16();
                 results[i] = record;
             }
 

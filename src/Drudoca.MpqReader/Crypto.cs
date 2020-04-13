@@ -2,12 +2,12 @@
 
 namespace Drudoca.MpqReader
 {
-    internal class Encryption : IEncryption
+    internal class Crypto : ICrypto
     {
 
         private readonly uint[] _cryptTable;
 
-        public Encryption()
+        public Crypto()
         {
             _cryptTable = CreateCryptTable();
         }

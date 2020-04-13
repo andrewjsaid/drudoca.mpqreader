@@ -21,8 +21,10 @@ namespace Drudoca.MpqReader.StreamReaders
             const int maxSupportedVersion = 3;
             const int maxHeaderSize = 208;
 
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(initialSize);
+            using var context = new MpqStreamReaderContext(stream);
+            var ctx = context.Reader;
+
+            await context.ReadAsync(initialSize);
 
             var signature = ctx.ReadInt32();
             if (signature != MpqConstants.MpqHeaderSignature)
@@ -49,9 +51,9 @@ namespace Drudoca.MpqReader.StreamReaders
                 throw new InvalidDataException($"Header size {headerSize} is too big.");
             }
 
-            if (headerSize > ctx.BufferSize)
+            if (headerSize > context.BufferSize)
             {
-                await ctx.ReadAsync(headerSize - ctx.BufferSize);
+                await context.ReadAsync(headerSize - context.BufferSize);
             }
 
             var blockSize = ctx.ReadUInt16();
@@ -115,7 +117,7 @@ namespace Drudoca.MpqReader.StreamReaders
             var md5MpqHeader = ctx.ReadByteArray(md5DigestSize);
 
             const int lengthOfDataToHash = 208 - 16; // Everything except the last md5;
-            var isValid = _md5Validation.Check(ctx.Buffer, 0, lengthOfDataToHash, md5MpqHeader);
+            var isValid = _md5Validation.Check(context.Buffer, 0, lengthOfDataToHash, md5MpqHeader);
             if (!isValid)
             {
                 throw new InvalidDataException("Block table MD5 check failed.");

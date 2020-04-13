@@ -8,16 +8,18 @@ namespace Drudoca.MpqReader.StreamReaders
     {
         public async Task<MpqUserDataHeader?> ReadAsync(Stream stream)
         {
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(16);
+            using var context= new MpqStreamReaderContext(stream);
+            var r = context.Reader;
 
-            var signature = ctx.ReadInt32();
+            await context.ReadAsync(16);
+
+            var signature = r.ReadInt32();
             if (signature != MpqConstants.MpqUserDataSignature)
                 return null;
 
-            var userDataSize = ctx.ReadInt32();
-            var headerOffset = ctx.ReadInt32();
-            var userDataHeaderSize = ctx.ReadInt32();
+            var userDataSize = r.ReadInt32();
+            var headerOffset = r.ReadInt32();
+            var userDataHeaderSize = r.ReadInt32();
 
             return new MpqUserDataHeader(
                 userDataSize, headerOffset, userDataHeaderSize);

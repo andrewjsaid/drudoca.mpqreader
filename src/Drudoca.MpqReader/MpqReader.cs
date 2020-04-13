@@ -18,7 +18,8 @@ namespace Drudoca.MpqReader
                 throw new NotSupportedException("This library only works on LittleEndian systems.");
             }
 
-            var sr = new MpqStreamReader(new Md5Validation(), new Encryption());
+            var encryption = new Crypto();
+            var sr = new MpqStreamReader(new Md5Validation(), encryption);
 
             long userDataHeaderOffset = 0;
 
@@ -74,6 +75,9 @@ namespace Drudoca.MpqReader
                 userDataHeaderOffset, userDataHeader,
                 archiveHeaderOffset, archiveHeader,
                 basicFileTable, exFileTable);
+            
+            result.Crypto = encryption;
+
             return result;
         }
 

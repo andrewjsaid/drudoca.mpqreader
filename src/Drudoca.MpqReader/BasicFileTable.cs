@@ -2,12 +2,12 @@
 {
     internal class BasicFileTable
     {
-        private readonly BasicFileTableEntry?[] _entries;
-
         public BasicFileTable(BasicFileTableEntry?[] entries)
         {
-            _entries = entries;
+            Entries = entries;
         }
 
+        public int Length => Entries?.Length ?? default;
+        public BasicFileTableEntry?[] Entries { get; }
     }
 }

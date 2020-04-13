@@ -9,11 +9,11 @@ namespace Drudoca.MpqReader.StreamReaders
     internal class MpqBetTableReader
     {
         private readonly IMd5Validation _md5Validation;
-        private readonly IEncryption _encryption;
+        private readonly ICrypto _encryption;
 
         private const uint _encryptionKey = 0xec83b3a3; // HashFileKey("(block table)")
 
-        public MpqBetTableReader(IMd5Validation md5Validation, IEncryption encryption)
+        public MpqBetTableReader(IMd5Validation md5Validation, ICrypto encryption)
         {
             _md5Validation = md5Validation;
             _encryption = encryption;
@@ -23,74 +23,76 @@ namespace Drudoca.MpqReader.StreamReaders
         {
             const int headerSize = 12;
 
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(headerSize);
+            using var context = new MpqStreamReaderContext(stream);
+            var r = context.Reader;
 
-            var signature = ctx.ReadInt32();
+            await context.ReadAsync(headerSize);
+
+            var signature = r.ReadInt32();
             if (signature != MpqConstants.MpqBetTableSignature)
             {
                 return null;
             }
 
-            var version = ctx.ReadInt32();
+            var version = r.ReadInt32();
             if (version != 1)
             {
                 throw new NotSupportedException($"Only supporting bet table version 1. Version: {version}");
             }
 
-            var dataSize = ctx.ReadInt32();
+            var dataSize = r.ReadInt32();
             if (size < dataSize + headerSize)
             {
                 throw new NotSupportedException("Compressed Extension Table is not yet supported.");
             }
 
-            await ctx.ReadAsync(dataSize);
+            await context.ReadAsync(dataSize);
 
             if (md5 != null)
             {
-                var isValid = _md5Validation.Check(ctx.Buffer, 0, ctx.BufferSize, md5);
+                var isValid = _md5Validation.Check(context.Buffer, 0, context.BufferSize, md5);
                 if (!isValid)
                 {
                     throw new InvalidDataException("Bet table MD5 check failed.");
                 }
             }
 
-            _encryption.DecryptInPlace(ctx.Buffer, headerSize, dataSize, _encryptionKey);
+            _encryption.DecryptInPlace(context.Buffer, headerSize, dataSize, _encryptionKey);
 
-            var tableSize = ctx.ReadInt32();
+            var tableSize = r.ReadInt32();
             // Should be equal to dataSize as far as I understand
             if (dataSize != tableSize)
             {
                 throw new InvalidDataException($"DataSize {dataSize} should be equal to TableSize {tableSize}");
             }
 
-            var numEntries = ctx.ReadInt32();
-            var unknownThingy = ctx.ReadInt32();
+            var numEntries = r.ReadInt32();
+            var unknownThingy = r.ReadInt32();
             if (unknownThingy != 0x10)
             {
                 throw new InvalidDataException($"Unexpected value for <unknown>.");
             }
 
-            var tableEntryBitSize = ctx.ReadInt32();
-            var fileOffsetBitIndex = ctx.ReadInt32();
-            var fileSizeBitIndex = ctx.ReadInt32();
-            var compressedSizeBitIndex = ctx.ReadInt32();
-            var flagIndexBitIndex = ctx.ReadInt32();
-            var unknownBitIndex = ctx.ReadInt32();
-            var fileOffsetBitSize = ctx.ReadInt32();
-            var fileSizeBitSize = ctx.ReadInt32();
-            var compressedSizeBitSize = ctx.ReadInt32();
-            var flagIndexBitSize = ctx.ReadInt32();
-            var unknownBitSize = ctx.ReadInt32();
+            var tableEntryBitSize = r.ReadInt32();
+            var fileOffsetBitIndex = r.ReadInt32();
+            var fileSizeBitIndex = r.ReadInt32();
+            var compressedSizeBitIndex = r.ReadInt32();
+            var flagIndexBitIndex = r.ReadInt32();
+            var unknownBitIndex = r.ReadInt32();
+            var fileOffsetBitSize = r.ReadInt32();
+            var fileSizeBitSize = r.ReadInt32();
+            var compressedSizeBitSize = r.ReadInt32();
+            var flagIndexBitSize = r.ReadInt32();
+            var unknownBitSize = r.ReadInt32();
             if (unknownBitSize > 0)
             {
                 throw new InvalidDataException($"Unknown bit size has always been 0.");
             }
 
-            var totalBetHashBitSize = ctx.ReadInt32();
-            var extraBetHashBitSize = ctx.ReadInt32();
-            var betHashBitSize = ctx.ReadInt32();
-            var betHashTableSize = ctx.ReadInt32();
+            var totalBetHashBitSize = r.ReadInt32();
+            var extraBetHashBitSize = r.ReadInt32();
+            var betHashBitSize = r.ReadInt32();
+            var betHashTableSize = r.ReadInt32();
 
             if (betHashTableSize != ((numEntries * totalBetHashBitSize) + 7) / 8)
             {
@@ -98,12 +100,12 @@ namespace Drudoca.MpqReader.StreamReaders
                     $"BetHashTableSize {betHashTableSize} should be predictable from NumEntries {numEntries} and TotalBetHashBitSize {totalBetHashBitSize}");
             }
 
-            var flagCount = ctx.ReadInt32();
+            var flagCount = r.ReadInt32();
 
             var flags = new uint[flagCount];
             for (int i = 0; i < flagCount; i++)
             {
-                flags[i] = ctx.ReadUInt32();
+                flags[i] = r.ReadUInt32();
             }
 
             var entryTable = new MpqBlockTable[numEntries];
@@ -112,11 +114,11 @@ namespace Drudoca.MpqReader.StreamReaders
                 var bitOffset = 0;
                 for (int i = 0; i < numEntries; i++)
                 {
-                    var fileOffset = (long)ctx.ReadBits(bitOffset + fileOffsetBitIndex, fileOffsetBitSize);
-                    var fileSize = (long)ctx.ReadBits(bitOffset + fileSizeBitIndex, fileSizeBitSize);
-                    var compressedFileSize = (long)ctx.ReadBits(bitOffset + compressedSizeBitIndex, compressedSizeBitSize);
+                    var fileOffset = (long)r.ReadBits(bitOffset + fileOffsetBitIndex, fileOffsetBitSize);
+                    var fileSize = (long)r.ReadBits(bitOffset + fileSizeBitIndex, fileSizeBitSize);
+                    var compressedFileSize = (long)r.ReadBits(bitOffset + compressedSizeBitIndex, compressedSizeBitSize);
                     Debug.Assert(compressedFileSize <= fileSize);
-                    var flagIndex = (int)ctx.ReadBits(bitOffset + flagIndexBitIndex, flagIndexBitSize);
+                    var flagIndex = (int)r.ReadBits(bitOffset + flagIndexBitIndex, flagIndexBitSize);
                     Debug.Assert(flagCount == 0 || flagIndex < flagCount);
                     var eFlags = flagCount > 0 ? flags[flagIndex] : default;
 
@@ -129,7 +131,7 @@ namespace Drudoca.MpqReader.StreamReaders
                     entryTable[i] = e;
                     bitOffset += tableEntryBitSize;
                 }
-                ctx.Advance((bitOffset + 7) / 8);
+                r.Advance((bitOffset + 7) / 8);
             }
 
             var betHashTable = new ulong[numEntries];
@@ -138,11 +140,11 @@ namespace Drudoca.MpqReader.StreamReaders
                 var bitOffset = 0;
                 for (int i = 0; i < numEntries; i++)
                 {
-                    var hash = ctx.ReadBits(bitOffset, betHashBitSize);
+                    var hash = r.ReadBits(bitOffset, betHashBitSize);
                     betHashTable[i] = hash;
                     bitOffset += totalBetHashBitSize;
                 }
-                ctx.Advance(betHashTableSize);
+                r.Advance(betHashTableSize);
             }
 
             return new MpqBetTable(numEntries, entryTable, betHashTable);

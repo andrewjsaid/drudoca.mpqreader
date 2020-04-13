@@ -8,11 +8,11 @@ namespace Drudoca.MpqReader.StreamReaders
     internal class MpqBlockTableReader
     {
         private readonly IMd5Validation _md5Validation;
-        private readonly IEncryption _encryption;
+        private readonly ICrypto _encryption;
 
         private const uint _encryptionKey = 0xec83b3a3; // HashFileKey("(block table)")
 
-        public MpqBlockTableReader(IMd5Validation md5Validation, IEncryption encryption)
+        public MpqBlockTableReader(IMd5Validation md5Validation, ICrypto encryption)
         {
             _md5Validation = md5Validation;
             _encryption = encryption;
@@ -22,37 +22,39 @@ namespace Drudoca.MpqReader.StreamReaders
         {
             const int size = 16;
 
-            using var ctx = new MpqStreamReaderContext(stream);
-            await ctx.ReadAsync(size * count);
+            using var context = new MpqStreamReaderContext(stream);
+            var r = context.Reader;
+
+            await context.ReadAsync(size * count);
 
             if (md5 != null)
             {
-                var isValid = _md5Validation.Check(ctx.Buffer, 0, ctx.BufferSize, md5);
+                var isValid = _md5Validation.Check(context.Buffer, 0, context.BufferSize, md5);
                 if (!isValid)
                 {
                     throw new InvalidDataException("Block table MD5 check failed.");
                 }
             }
 
-            _encryption.DecryptInPlace(ctx.Buffer, 0, ctx.BufferSize, _encryptionKey);
+            _encryption.DecryptInPlace(context.Buffer, 0, context.BufferSize, _encryptionKey);
 
             var results = new MpqBlockTable[count];
 
             for (int i = 0; i < count; i++)
             {
-                var record = Read(ctx);
+                var record = Read(r);
                 results[i] = record;
             }
 
             return results;
         }
 
-        private MpqBlockTable Read(MpqStreamReaderContext ctx)
+        private MpqBlockTable Read(ByteArrayReader r)
         {
-            var fileOffset = ctx.ReadInt32();
-            var compressedFileSize = ctx.ReadInt32();
-            var fileSize = ctx.ReadInt32();
-            var flags = ctx.ReadUInt32();
+            var fileOffset = r.ReadInt32();
+            var compressedFileSize = r.ReadInt32();
+            var fileSize = r.ReadInt32();
+            var flags = r.ReadUInt32();
 
             return new MpqBlockTable(
                 fileOffset,

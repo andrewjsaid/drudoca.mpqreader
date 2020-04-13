@@ -36,6 +36,8 @@ namespace Drudoca.MpqReader
             _exFileTable = exFileTable;
         }
 
+        internal ICrypto? Crypto { get; set; }
+
         public void Dispose()
         {
             if (_disposeStream)
@@ -51,5 +53,38 @@ namespace Drudoca.MpqReader
                 await _stream.DisposeAsync();
             }
         }
+
+        public MpqArchiveFile? GetFile(string path)
+        {
+            IFileTableEntry? fte = null;
+
+            Crypto ??= new Crypto();
+
+            if (_basicFileTable != null)
+            {
+                var searcher = new BasicFileTableSearch(Crypto);
+                fte = searcher.Search(_basicFileTable, path);
+            }
+
+            if (_exFileTable != null && fte == null)
+            {
+                var searcher = new ExFileTableSearch(Crypto);
+                fte = searcher.Search(_exFileTable, path);
+            }
+
+            if (fte == null || (fte.Flags & BlockFileFlags.Exists) == 0)
+            {
+                // File not found
+                return null;
+            }
+
+            var result = new MpqArchiveFile(this, fte);
+            return result;
+        }
+
+        internal int BlockSize => _archiveHeader.BlockSize;
+        internal void Seek(long archiveOffset) => _stream.Seek(_archiveHeaderOffset + archiveOffset, SeekOrigin.Begin);
+        internal Task<int> ReadAsync(byte[] buffer, int offset, int length) => _stream.ReadAsync(buffer, offset, length);
+
     }
 }

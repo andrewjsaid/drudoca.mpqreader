@@ -8,8 +8,8 @@
     {
 
         public BasicFileTableEntry(
-            int nameHash1,
-            int nameHash2,
+            uint nameHash1,
+            uint nameHash2,
             ushort locale,
             ushort platform,
             bool isDeleted,
@@ -29,9 +29,9 @@
             Flags = flags;
         }
 
-        public int NameHash1 { get; }
+        public uint NameHash1 { get; }
 
-        public int NameHash2 { get; }
+        public uint NameHash2 { get; }
 
         /// <summary>
         /// Windows LANGID data type, and uses the same values.

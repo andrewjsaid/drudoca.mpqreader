@@ -4,8 +4,8 @@
     {
 
         public MpqHashTable(
-            int nameHash1,
-            int nameHash2,
+            uint nameHash1,
+            uint nameHash2,
             ushort locale,
             ushort platform,
             uint blockIndex)
@@ -20,12 +20,12 @@
         /// <summary>
         /// Hash of the full file name, part 1.
         /// </summary>
-        public int NameHash1 { get; }
+        public uint NameHash1 { get; }
 
         /// <summary>
         /// Hash of the full file name, part 2.
         /// </summary>
-        public int NameHash2 { get; }
+        public uint NameHash2 { get; }
 
         /// <summary>
         /// The language of the file. This is a Windows LANGID data type, and uses the same values.

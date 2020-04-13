@@ -11,11 +11,11 @@ namespace Drudoca.MpqReader.StreamReaders
     {
 
         private readonly IMd5Validation _md5Validation;
-        private readonly IEncryption _encryption;
+        private readonly ICrypto _encryption;
 
         public MpqStreamReader(
             IMd5Validation md5Validation,
-            IEncryption encryption)
+            ICrypto encryption)
         {
             _md5Validation = md5Validation;
             _encryption = encryption;

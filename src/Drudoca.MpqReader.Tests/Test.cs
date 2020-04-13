@@ -17,6 +17,14 @@ namespace Drudoca.MpqReader.Tests
             using var archive = await reader.ReadAsync(File.OpenRead(path), true);
 
             Assert.IsNotNull(archive);
+
+            var listFile = archive.GetFile("(listfile)");
+            Assert.IsNotNull(listFile);
+
+            var b = await listFile!.ReadAsync();
+            var s = System.Text.Encoding.ASCII.GetString(b);
+            Assert.IsNotNull(s);
+
         }
     }
 }
