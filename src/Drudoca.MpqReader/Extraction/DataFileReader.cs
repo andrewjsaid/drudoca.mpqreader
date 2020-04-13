@@ -34,7 +34,7 @@ namespace Drudoca.MpqReader.Extraction
                     var fileSource = source.Slice(offset, compressedSize);
                     var fileTarget = target.Slice(0, fileSize);
 
-                    var written = ReadSector(fileSource, fileTarget, file.Flags);
+                    ReadSector(fileSource, fileTarget, file.Flags);
 
                     targetIndex += fileSize;
                 }
@@ -75,7 +75,7 @@ namespace Drudoca.MpqReader.Extraction
             }
         }
 
-        private long ReadSector(Memory<byte> source, Memory<byte> target, BlockFileFlags flags)
+        private void ReadSector(Memory<byte> source, Memory<byte> target, BlockFileFlags flags)
         {
             if (HasFlag(flags, BlockFileFlags.Encrpyted))
             {
@@ -83,7 +83,11 @@ namespace Drudoca.MpqReader.Extraction
                 throw new NotImplementedException("Decryption not yet supported");
             }
 
-            if (HasFlag(flags, BlockFileFlags.Compressed))
+            if(source.Length == target.Length)
+            {
+                source.CopyTo(target);
+            }
+            else if (HasFlag(flags, BlockFileFlags.Compressed))
             {
                 var compressionType = (MpqCompressionType)source.Span[0];
                 source = source.Slice(1);
@@ -92,7 +96,10 @@ namespace Drudoca.MpqReader.Extraction
                 var size = compressionConductor.Decompress(
                     source, target, compressionType);
 
-                return size;
+                if (size != target.Length)
+                {
+                    throw new InvalidDataException($"Decompression size was {size}. Expected {target.Length}.");
+                }
 
             }
             else if (HasFlag(flags, BlockFileFlags.Imploded))
@@ -101,7 +108,7 @@ namespace Drudoca.MpqReader.Extraction
             }
             else
             {
-                throw new NotImplementedException("TODO AJS");
+                throw new InvalidDataException("Invalid flags or sector size.");
             }
         }
     }

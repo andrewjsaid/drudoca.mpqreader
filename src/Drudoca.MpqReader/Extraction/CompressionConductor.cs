@@ -34,8 +34,8 @@ namespace Drudoca.MpqReader.Extraction
 
                     foreach (var c in compressions)
                     {
-                        currentTarget = isBufferTarget 
-                            ? buffer.Memory.Slice(0, prevDataLength) 
+                        currentTarget = isBufferTarget
+                            ? buffer.Memory.Slice(0, prevDataLength)
                             : target.Slice(0, prevDataLength);
 
                         prevDataLength = c.Decompress(prevTarget, currentTarget);
@@ -50,10 +50,18 @@ namespace Drudoca.MpqReader.Extraction
         private ICompression[] GetCompressions(MpqCompressionType type)
         {
             var result = new List<ICompression>();
+
             if ((type & MpqCompressionType.BZip2) != 0)
             {
                 result.Add(new BZip2Compression());
+                type &= ~MpqCompressionType.BZip2;
             }
+
+            if (type != 0)
+            {
+                throw new NotSupportedException($"Compression type not supported: {type}.");
+            }
+
             return result.ToArray();
         }
 

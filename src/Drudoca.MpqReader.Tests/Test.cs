@@ -18,12 +18,15 @@ namespace Drudoca.MpqReader.Tests
 
             Assert.IsNotNull(archive);
 
-            var listFile = archive.GetFile("(listfile)");
-            Assert.IsNotNull(listFile);
+            var fileNames = await archive.ReadFileListAsync();
+            Assert.IsNotNull(fileNames);
 
-            var b = await listFile!.ReadAsync();
-            var s = System.Text.Encoding.ASCII.GetString(b);
-            Assert.IsNotNull(s);
+            foreach (var fileName in fileNames!)
+            {
+                var file = archive.GetFile(fileName)!;
+                Assert.IsNotNull(file);
+                var fileData = await file.ReadAsync();
+            }
 
         }
     }

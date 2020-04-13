@@ -14,7 +14,7 @@
         {
             // This algorithm should probably use the locale somehow...
 
-            var tableIndex = (int)_crypto.HashTableIndex(path) % table.Length;
+            var tableIndex = _crypto.HashTableIndex(path) % table.Length;
 
             var nameHash1 = _crypto.HashName1(path);
             var nameHash2 = _crypto.HashName2(path);

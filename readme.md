@@ -26,3 +26,4 @@ if needed.
 - Archives that do not start with UserData.
 - Imploded files.
 - Files (within the archive) larger than 4GB
+- Anything to do with (attributes), (signature) and (user data) special files.

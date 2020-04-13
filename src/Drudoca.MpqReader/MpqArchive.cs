@@ -82,6 +82,18 @@ namespace Drudoca.MpqReader
             return result;
         }
 
+        public async Task<string[]?> ReadFileListAsync()
+        {
+            var file = GetFile("(listfile)");
+            if (file == null)
+                return null;
+
+            var data = await file.ReadAsync();
+            var str = System.Text.Encoding.ASCII.GetString(data);
+            var results = str.Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+            return results;
+        }
+
         internal int BlockSize => _archiveHeader.BlockSize;
         internal void Seek(long archiveOffset) => _stream.Seek(_archiveHeaderOffset + archiveOffset, SeekOrigin.Begin);
         internal ValueTask<int> ReadAsync(Memory<byte> memory) => _stream.ReadAsync(memory);
